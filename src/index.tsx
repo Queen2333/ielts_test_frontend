@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
-
+import "./index.less";
 import App from './App'
 import * as dayjs from "dayjs";
-import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/zh-cn';
 
 dayjs.locale('zh-cn')
 

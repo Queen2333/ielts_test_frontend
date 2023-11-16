@@ -1,7 +1,12 @@
 import React, { ReactElement } from 'react';
 import ReactLayout from '../pages/common/layout';
+import { Navigate } from 'react-router-dom';
+
 import Home from '../pages/home';
-import { Navigate, RouteObject } from 'react-router-dom';
+import CambridgeIelts from '../pages/cambridgeIelts';
+import Examination from '../pages/examination';
+import CustomizedTest from '../pages/customizedTest';
+
 
 const routes: any[] = [
   {
@@ -18,6 +23,21 @@ const routes: any[] = [
         name: 'Index',
         path:'index',
         element: <Home />,
+      },
+      {
+        name: 'CambridgeIelts',
+        path:'cambridgeIelts',
+        element: <CambridgeIelts />,
+      },
+      {
+        name: 'Examination',
+        path:'examination',
+        element: <Examination />,
+      },
+      {
+        name: 'CustomizedTest',
+        path:'customizedTest',
+        element: <CustomizedTest />,
       },
     ],
   },
