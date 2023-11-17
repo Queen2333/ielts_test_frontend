@@ -1,9 +1,10 @@
-import { Layout, Button, Menu } from "antd";
+import { Layout, ConfigProvider, Menu } from "antd";
 import type { MenuProps } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import styles from "./styles.module.less";
+import zhCN from 'antd/locale/zh_CN';
 import {
     DesktopOutlined,
     HomeOutlined,
@@ -39,6 +40,7 @@ const items: MenuItem[] = [
     getItem('听力', '9'),
     getItem('阅读', '10'),
     getItem('写作', '11'),
+    getItem('套题', '12')
   ]),
   getItem('问题反馈', '4', <QuestionCircleOutlined />),
 ];
@@ -64,7 +66,7 @@ const ReactLayout: React.FC = () => {
         <Sider style={{ width: 256, height: '100vh' }}>
           <div style={{ height: '64px', color: '#fff' }}>logo</div>
           <Menu
-              defaultSelectedKeys={['index']}
+              defaultSelectedKeys={[currentNav]}
               selectedKeys={[currentNav]}
               defaultOpenKeys={['2', '3']}
               mode="inline"
@@ -80,8 +82,11 @@ const ReactLayout: React.FC = () => {
               <div className="font-18">Alex</div>
             </div>
           </Header>
-          <Content style={{ padding: '20px' }}>
+          <Content>
+            <ConfigProvider locale={zhCN}>
               <Outlet />
+            </ConfigProvider>
+              
           </Content>
           <Footer>Footer</Footer>
         </Layout>

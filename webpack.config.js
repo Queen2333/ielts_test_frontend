@@ -59,6 +59,17 @@ module.exports = {
           'css-loader',
         ],
       },
+      {
+        test: /\.(png|jpg|jpeg|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader', // 或 'file-loader'
+            options: {
+              limit: 8192, // 小于 8KB 的图片将转为 base64 格式
+            },
+          },
+        ],
+      },
     ],
   },
   optimization: {

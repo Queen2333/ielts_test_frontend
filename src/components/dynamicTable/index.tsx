@@ -1,7 +1,6 @@
 import React from "react";
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-// import { ColumnItem } from "../../pages/common/types";
 
 interface pageItem {
   total: number;

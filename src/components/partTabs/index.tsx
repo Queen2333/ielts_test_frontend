@@ -1,5 +1,6 @@
 import React from "react";
-import { Tabs } from 'antd';
+import { Tabs, Button } from 'antd';
+import styles from "./styles.module.less";
 
 interface tabItem {
   title: string;
@@ -8,6 +9,7 @@ interface tabItem {
 
 interface PartTabsProps {
   selectTab: (key: string) => void;
+  goToRecords: () => void;
 }
 
 const tab_list: tabItem[] = [
@@ -17,24 +19,33 @@ const tab_list: tabItem[] = [
   { title: "套题模考", key: "testing" }
 ]
 
-const PartTabs: React.FC<PartTabsProps> = ({ selectTab }) => {
+const PartTabs: React.FC<PartTabsProps> = ({ selectTab, goToRecords }) => {
 
   const changeTabs = (e: string) => {
     selectTab(e);
   }
+
+  const goRecord = () => {
+    goToRecords();
+  }
+
   return (
-    <Tabs
-      defaultActiveKey="listening"
-      type="card"
-      size="middle"
-      items={tab_list.map((item) => {
-        return {
-          label: item.title,
-          key: item.key
-        };
-      })}
-      onChange={(e) => changeTabs(e)}
-    />
+    <div className={styles.tab_content}>
+      <Tabs
+        defaultActiveKey="listening"
+        type="card"
+        size="middle"
+        items={tab_list.map((item) => {
+          return {
+            label: item.title,
+            key: item.key
+          };
+        })}
+        onChange={(e) => changeTabs(e)}
+      />
+      <Button type="primary" className={styles.btn_style} onClick={() => goRecord()}>做题记录</Button>
+    </div>
+    
   )
 }
 

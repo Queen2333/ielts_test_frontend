@@ -1,0 +1,48 @@
+:global {
+    @import "../../base.less";
+    .ant-slider .ant-slider-handle::after,
+    .ant-slider .ant-slider-handle:focus::after,
+    .ant-slider .ant-slider-handle:active::after,
+    .ant-slider .ant-slider-handle:hover::after
+    {
+      box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+      background: grey;
+    }
+  }
+  
+.header {
+  font-size: 1rem;
+  height: 64px;
+  background-image: linear-gradient(0deg,#152531,#434c51,#152531);
+  background-color: #152531;
+  padding: 0 2.15rem;
+  .timer {
+    height: 2em;
+  }
+  .time_text {
+    color: #fff0bd;
+    margin-left: 10px;
+  }
+  .helper {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    width: 500px;
+    .volume_icon {
+      height: 2em;
+    }
+    .normal_btn {
+      text-align: center;
+      padding: 0.375rem 0.75rem;
+      cursor: pointer;
+      border-radius: 0.25rem;
+      background: #fff;
+    }
+    .submit_btn {
+      background: linear-gradient(0deg,#3697c4,#b4dbf7);
+      margin-left: 10px;
+      font-weight: 400;
+    }
+  }
+}
+  

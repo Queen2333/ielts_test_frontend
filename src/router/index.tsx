@@ -6,7 +6,8 @@ import Home from '../pages/home';
 import CambridgeIelts from '../pages/cambridgeIelts';
 import Examination from '../pages/examination';
 import CustomizedTest from '../pages/customizedTest';
-
+import TestStep1 from "../pages/testStep1";
+import ListeningStep2 from "../pages/listeningStep2";
 
 const routes: any[] = [
   {
@@ -40,6 +41,16 @@ const routes: any[] = [
         element: <CustomizedTest />,
       },
     ],
+  },
+  {
+    name: 'TestStep1',
+    path:'testStep1',
+    element: <TestStep1 />,
+  },
+  {
+    name: 'ListeningStep2',
+    path:'listeningStep2',
+    element: <ListeningStep2 />,
   },
   {
     name: 'root',
