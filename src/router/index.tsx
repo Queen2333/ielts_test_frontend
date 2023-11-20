@@ -8,6 +8,7 @@ import Examination from '../pages/examination';
 import CustomizedTest from '../pages/customizedTest';
 import TestStep1 from "../pages/testStep1";
 import ListeningStep2 from "../pages/listeningStep2";
+import ListeningStep3 from "../pages/listeningStep3";
 
 const routes: any[] = [
   {
@@ -51,6 +52,11 @@ const routes: any[] = [
     name: 'ListeningStep2',
     path:'listeningStep2',
     element: <ListeningStep2 />,
+  },
+  {
+    name: 'ListeningStep3',
+    path:'listeningStep3',
+    element: <ListeningStep3 />,
   },
   {
     name: 'root',
