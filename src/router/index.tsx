@@ -12,56 +12,56 @@ import ListeningStep3 from "../pages/listeningStep3";
 
 const routes: any[] = [
   {
-    name: 'IndexUrl',
-    path:'/',
-    element: <Navigate to='/index' />,
+    name: "IndexUrl",
+    path: "/",
+    element: <Navigate to="/index" />,
   },
   {
-    name: 'Layout',
-    path: '/',
+    name: "Layout",
+    path: "/",
     element: <ReactLayout />,
     children: [
       {
-        name: 'Index',
-        path:'index',
+        name: "Index",
+        path: "index",
         element: <Home />,
       },
       {
-        name: 'CambridgeIelts',
-        path:'cambridgeIelts',
+        name: "CambridgeIelts",
+        path: "cambridgeIelts",
         element: <CambridgeIelts />,
       },
       {
-        name: 'Examination',
-        path:'examination',
+        name: "Examination",
+        path: "examination",
         element: <Examination />,
       },
       {
-        name: 'CustomizedTest',
-        path:'customizedTest',
+        name: "CustomizedTest",
+        path: "customizedTest",
         element: <CustomizedTest />,
       },
     ],
   },
   {
-    name: 'TestStep1',
-    path:'testStep1',
+    name: "TestStep1",
+    path: "testStep1",
     element: <TestStep1 />,
   },
   {
-    name: 'ListeningStep2',
-    path:'listeningStep2',
+    name: "ListeningStep2",
+    path: "listeningStep2",
     element: <ListeningStep2 />,
   },
   {
-    name: 'ListeningStep3',
-    path:'listeningStep3',
+    name: "ListeningStep3",
+    path: "listeningStep3",
     element: <ListeningStep3 />,
   },
   {
-    name: 'root',
-    path: '*',
-    element: <Navigate to='/' replace />
-  }
+    name: "root",
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
 ];
 export default routes;

@@ -62,35 +62,34 @@ const ReactLayout: React.FC = () => {
 
 
   return (
+    <Layout>
+      <Sider style={{ width: 256, height: "100vh" }}>
+        <div style={{ height: "64px", color: "#fff" }}>logo</div>
+        <Menu
+          defaultSelectedKeys={[currentNav]}
+          selectedKeys={[currentNav]}
+          defaultOpenKeys={["2", "3"]}
+          mode="inline"
+          theme="dark"
+          items={items}
+          onClick={(e) => changePage(e)}
+        />
+      </Sider>
       <Layout>
-        <Sider style={{ width: 256, height: '100vh' }}>
-          <div style={{ height: '64px', color: '#fff' }}>logo</div>
-          <Menu
-              defaultSelectedKeys={[currentNav]}
-              selectedKeys={[currentNav]}
-              defaultOpenKeys={['2', '3']}
-              mode="inline"
-              theme="dark"
-              items={items}
-              onClick={(e) => changePage(e)}
-          />
-        </Sider>
-        <Layout>
-          <Header className={styles.header}>
-            <div className="flex-alc-jcs">
-              <div className="font-24 fwb">IELTS机考模拟系统</div>
-              <div className="font-18">Alex</div>
-            </div>
-          </Header>
-          <Content>
-            <ConfigProvider locale={zhCN}>
-              <Outlet />
-            </ConfigProvider>
-              
-          </Content>
-          <Footer>Footer</Footer>
-        </Layout>
+        <Header className={styles.header}>
+          <div className="flex-alc-jcs">
+            <div className="font-24 fwb">IELTS机考模拟系统</div>
+            <div className="font-18">Alex</div>
+          </div>
+        </Header>
+        <Content>
+          <ConfigProvider locale={zhCN}>
+            <Outlet />
+          </ConfigProvider>
+        </Content>
+        <Footer>Footer</Footer>
       </Layout>
-  )
+    </Layout>
+  );
 };
 export default ReactLayout;
