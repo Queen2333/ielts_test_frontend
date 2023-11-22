@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import styles from "./styles.module.less";
-import TestHeader from '../../components/testHeader';
-import sound from "../../assets/sound.png";
-import warnIcon from "../../assets/warning_icon.png";
+import TestHeader from "../../../components/testHeader";
+import sound from "../../../assets/sound.png";
+import warnIcon from "../../../assets/warning_icon.png";
 import { useLocation, useNavigate } from "react-router-dom";
-
 
 const ListeningStep2: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ const ListeningStep2: React.FC = () => {
   const toNextStep = () => {
     console.log(location.state, "location");
     navigate("/listeningStep3");
-  }
+  };
 
   return (
     <div className={styles.step_content}>
@@ -55,7 +54,6 @@ const ListeningStep2: React.FC = () => {
       </div>
     </div>
   );
-}
-
+};
 
 export default ListeningStep2;

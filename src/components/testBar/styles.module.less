@@ -1,0 +1,51 @@
+:global {
+  @import "../../base.less";
+}
+.bar_box {
+  height: 60px;
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  right: 20px;
+  margin-bottom: 10px;
+  .page_btn_group {
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-end;
+    .page_btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ededed;
+      text-align: center;
+      font-size: 36px;
+      line-height: 50px;
+      cursor: pointer;
+    }
+    .page_btn:first-child {
+      margin-right: 10px;
+    }
+  }
+  .part_title {
+    font-size: 1rem;
+    margin-left: 10px;
+  }
+  .question_number {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    background-color: #565656;
+    margin-left: 10px;
+    line-height: 30px;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1rem;
+  }
+  .question_number:last-child {
+    margin-right: 10px;
+  }
+  .checked_question {
+    background: #bbdbf4;
+  }
+}

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import styles from "./styles.module.less";
-import TestHeader from "../../components/testHeader";
-import { useLocation } from "react-router-dom";
+import TestHeader from "../../../components/testHeader";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ListeningStep3: React.FC = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const toNextStep = () => {
     console.log(location.state, "location");
+    navigate("/listeningModule");
   };
 
   return (
@@ -86,6 +88,5 @@ const ListeningStep3: React.FC = () => {
     </div>
   );
 };
-
 
 export default ListeningStep3;

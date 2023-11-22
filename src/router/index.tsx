@@ -7,8 +7,9 @@ import CambridgeIelts from '../pages/cambridgeIelts';
 import Examination from '../pages/examination';
 import CustomizedTest from '../pages/customizedTest';
 import TestStep1 from "../pages/testStep1";
-import ListeningStep2 from "../pages/listeningStep2";
-import ListeningStep3 from "../pages/listeningStep3";
+import ListeningStep2 from "../pages/listeningModule/listeningStep2";
+import ListeningStep3 from "../pages/listeningModule/listeningStep3";
+import ListeningModule from "../pages/listeningModule/listeningtest";
 
 const routes: any[] = [
   {
@@ -57,6 +58,11 @@ const routes: any[] = [
     name: "ListeningStep3",
     path: "listeningStep3",
     element: <ListeningStep3 />,
+  },
+  {
+    name: "ListeningModule",
+    path: "listeningModule",
+    element: <ListeningModule />,
   },
   {
     name: "root",
