@@ -3,7 +3,9 @@ import styles from "./styles.module.less";
 import { Checkbox, Card } from "antd";
 import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
-
+interface PartProps {
+  chooseQuestion: (part: number, question: number) => void;
+}
 const part_list: any[] = [
   {
     title: "Part1",
@@ -67,7 +69,7 @@ const part_list: any[] = [
   },
 ];
 
-const TestBar: React.FC = () => {
+const TestBar: React.FC<PartProps> = ({ chooseQuestion }) => {
   const [partList, setPartList] = useState(part_list);
   const [currentPart, setCurrentPart] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -76,6 +78,10 @@ const TestBar: React.FC = () => {
   useEffect(() => {
     setReviewCheck(partList[currentPart].children[currentQuestion].isReview);
   }, [partList[currentPart].children[currentQuestion].isReview]);
+
+  useEffect(() => {
+    chooseQuestion(currentPart, currentQuestion);
+  }, [currentPart, currentQuestion]);
 
   const onChange = (e: CheckboxChangeEvent) => {
     partList[currentPart].children[currentQuestion].isReview = e.target.checked;
