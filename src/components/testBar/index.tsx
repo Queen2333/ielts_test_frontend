@@ -5,72 +5,11 @@ import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 interface PartProps {
   chooseQuestion: (part: number, question: number) => void;
+  questionList: any[];
 }
-const part_list: any[] = [
-  {
-    title: "Part1",
-    children: [
-      { idx: 1, isReview: false, checked: true },
-      { idx: 2, isReview: false, checked: false },
-      { idx: 3, isReview: false, checked: false },
-      { idx: 4, isReview: false, checked: false },
-      { idx: 5, isReview: false, checked: false },
-      { idx: 6, isReview: false, checked: false },
-      { idx: 7, isReview: false, checked: false },
-      { idx: 8, isReview: false, checked: false },
-      { idx: 9, isReview: false, checked: false },
-      { idx: 10, isReview: false, checked: false },
-    ],
-  },
-  {
-    title: "Part2",
-    children: [
-      { idx: 1, isReview: false, checked: false },
-      { idx: 2, isReview: false, checked: false },
-      { idx: 3, isReview: false, checked: false },
-      { idx: 4, isReview: false, checked: false },
-      { idx: 5, isReview: false, checked: false },
-      { idx: 6, isReview: false, checked: false },
-      { idx: 7, isReview: false, checked: false },
-      { idx: 8, isReview: false, checked: false },
-      { idx: 9, isReview: false, checked: false },
-      { idx: 10, isReview: false, checked: false },
-    ],
-  },
-  {
-    title: "Part3",
-    children: [
-      { idx: 1, isReview: false, checked: false },
-      { idx: 2, isReview: false, checked: false },
-      { idx: 3, isReview: false, checked: false },
-      { idx: 4, isReview: false, checked: false },
-      { idx: 5, isReview: false, checked: false },
-      { idx: 6, isReview: false, checked: false },
-      { idx: 7, isReview: false, checked: false },
-      { idx: 8, isReview: false, checked: false },
-      { idx: 9, isReview: false, checked: false },
-      { idx: 10, isReview: false, checked: false },
-    ],
-  },
-  {
-    title: "Part4",
-    children: [
-      { idx: 1, isReview: false, checked: false },
-      { idx: 2, isReview: false, checked: false },
-      { idx: 3, isReview: false, checked: false },
-      { idx: 4, isReview: false, checked: false },
-      { idx: 5, isReview: false, checked: false },
-      { idx: 6, isReview: false, checked: false },
-      { idx: 7, isReview: false, checked: false },
-      { idx: 8, isReview: false, checked: false },
-      { idx: 9, isReview: false, checked: false },
-      { idx: 10, isReview: false, checked: false },
-    ],
-  },
-];
 
-const TestBar: React.FC<PartProps> = ({ chooseQuestion }) => {
-  const [partList, setPartList] = useState(part_list);
+const TestBar: React.FC<PartProps> = ({ chooseQuestion, questionList }) => {
+  const [partList, setPartList] = useState(questionList);
   const [currentPart, setCurrentPart] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [reviewCheck, setReviewCheck] = useState(false);
