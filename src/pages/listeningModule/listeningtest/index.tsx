@@ -4,6 +4,7 @@ import TestHeader from "../../../components/testHeader";
 import TestBar from "../../../components/testBar";
 import { useLocation } from "react-router-dom";
 import { Card, Input, Radio, Space } from "antd";
+import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 
 const questionModule: any[] = [
@@ -15,6 +16,7 @@ const questionModule: any[] = [
         type: "fill_in_blanks",
         title: "Complete the notes below. Write ONE WORD ONLY for each answer.",
         question: "Name: Anna [blank1]",
+        answer: "",
         question_list: [
           {
             id: 1,
@@ -46,22 +48,22 @@ const questionModule: any[] = [
             id: 55,
             no: 5,
             question: "The company deals mostly with:",
+            answer: "",
             options: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
+              { label: "A", text: "Big city." },
+              { label: "B", text: "Nature holidays." },
+              { label: "C", text: "Nepal." },
             ],
           },
           {
             id: 66,
             no: 6,
             question: "The overseas consultants deal mostly with:",
+            answer: "",
             options: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
+              { label: "A", text: "Asia." },
+              { label: "B", text: "North America." },
+              { label: "C", text: "Europe." },
             ],
           },
         ],
@@ -74,6 +76,7 @@ const questionModule: any[] = [
             id: 77,
             no: 7,
             question: "",
+            answer: "",
             options: [
               { label: "A", text: "" },
               { label: "B", text: "" },
@@ -86,6 +89,7 @@ const questionModule: any[] = [
             id: 88,
             no: 8,
             question: "",
+            answer: "",
             options: [
               { label: "A", text: "" },
               { label: "B", text: "" },
@@ -103,6 +107,7 @@ const questionModule: any[] = [
           {
             id: 88,
             no: 9,
+            answer: "",
             descriptions: [
               { label: "A", text: "" },
               { label: "B", text: "" },
@@ -127,45 +132,69 @@ const questionModule: any[] = [
   {
     part: "Part 2",
     partNumber: "11-20",
+    type_list: [],
   },
   {
     part: "Part 3",
     partNumber: "21-30",
+    type_list: [],
   },
   {
     part: "Part 4",
     partNumber: "31-40",
+    type_list: [],
   },
 ];
-const ListeningStep3: React.FC = () => {
+const ListeningTest: React.FC = () => {
   const location = useLocation();
   const [part, setPart] = useState(0);
+  const [questionType, setQuestionType] = useState(questionModule);
 
   const chooseQuestion = (part: number, question: number) => {
     console.log(part, question);
     setPart(part);
   };
+
+  const changeChoice = (e: RadioChangeEvent, index: number, idx: number) => {
+    console.log(e, index, idx, "change");
+    questionType[part].type_list[index].question_list[idx].answer =
+      e.target.value;
+    setQuestionType([...questionType]);
+  };
+
+  const handleSelect = () => {
+    const selection = window.getSelection();
+    if (selection) {
+      const text = selection.toString();
+
+      if (text) console.log(text, "选中的");
+      // setSelectedText(text);
+    }
+  };
   return (
-    <div className={styles.step_content}>
+    <div className={styles.step_content} onClick={handleSelect}>
       <TestHeader />
       <div className={styles.test_content}>
         <Card>
           <p className={`${styles.part_title} font-28 fwb`}>
-            {questionModule[part].part}
+            {questionType[part].part}
           </p>
           <p className={`${styles.part_desc} font-16`}>
-            Listen and answer questions {questionModule[part].partNumber}.
+            Listen and answer questions {questionType[part].partNumber}.
           </p>
         </Card>
         <Card className={`${styles.test_card} overflow_auto`}>
-          {questionModule[part].type_list.map((item: any, index: number) => (
+          {questionType[part].type_list.map((item: any, index: number) => (
             <div key={index}>
               <p>{item.title}</p>
               {item.type === "choice" &&
                 item.question_list.map((i: any, idx: number) => (
                   <div key={idx}>
                     <p>{`${i.no} ${i.question}`}</p>
-                    <Radio.Group value={"A"}>
+                    <Radio.Group
+                      value={i.answer}
+                      onChange={(e) => changeChoice(e, index, idx)}
+                    >
                       <Space direction="vertical">
                         {i.options.map((value: any, id: number) => (
                           <Radio value={value.label} key={id}>
@@ -188,4 +217,4 @@ const ListeningStep3: React.FC = () => {
   );
 };
 
-export default ListeningStep3;
+export default ListeningTest;
