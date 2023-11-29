@@ -9,13 +9,13 @@ const Dotenv = require('dotenv-webpack');
 
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: "./src/index.tsx",
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'static/js/[name].[contenthash].js',
+    path: path.resolve(__dirname, "build"),
+    filename: "static/js/[name].[contenthash].js",
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: [".tsx", ".ts", ".js"],
   },
   devtool: false,
   cache: true,
@@ -26,12 +26,12 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
               presets: [
-                '@babel/preset-env',
-                '@babel/preset-react',
-                '@babel/preset-typescript',
+                "@babel/preset-env",
+                "@babel/preset-react",
+                "@babel/preset-typescript",
               ],
             },
           },
@@ -39,24 +39,17 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader',
-        ],
+        use: ["style-loader", "css-loader", "less-loader"],
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader',
-        ],
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: [
           {
-            loader: 'url-loader', // 或 'file-loader'
+            loader: "url-loader", // 或 'file-loader'
             options: {
               limit: 8192, // 小于 8KB 的图片将转为 base64 格式
             },
@@ -66,42 +59,44 @@ module.exports = {
     ],
   },
   plugins: [
-    new Dotenv({path: `./.env.dev`}),
-    new HtmlWebpackPlugin({template: './public/index.html',}),
-    new MiniCssExtractPlugin({filename: 'static/css/[name].[contenthash].css',}),
+    new Dotenv({ path: `./.env.dev` }),
+    new HtmlWebpackPlugin({ template: "./public/index.html" }),
+    new MiniCssExtractPlugin({
+      filename: "static/css/[name].[contenthash].css",
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'public',
+          from: "public",
           globOptions: {
             dot: true,
             gitignore: true,
-            ignore: ['**/*.html'],
+            ignore: ["**/*.html"],
           },
         },
       ],
     }),
     new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map', // 指定生成的源映射文件的名称
+      filename: "[file].map", // 指定生成的源映射文件的名称
       // exclude: ['vendor.js'], // 可选，排除特定的文件不生成源映射
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'build'),
+      directory: path.join(__dirname, "build"),
     },
     hot: true,
     compress: true,
-    port: 8989,
+    port: 8700,
     client: {
-      logging: 'verbose', // 设置为 'info' 或 'verbose'，以启用模块名称输出
+      logging: "verbose", // 设置为 'info' 或 'verbose'，以启用模块名称输出
     },
     proxy: {
-      '/form_web': {
+      "/form_web": {
         target: process.env.FE_C_URL,
         changeOrigin: true,
-        pathRewrite: { '^/form_web': '/form_web' },
+        pathRewrite: { "^/form_web": "/form_web" },
       },
     },
   },

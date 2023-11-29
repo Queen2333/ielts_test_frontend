@@ -14,13 +14,13 @@ const host = 'http://ibptest.vanke.com/'
 
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: "./src/index.tsx",
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'static/js/[name].[contenthash].js',
+    path: path.resolve(__dirname, "build"),
+    filename: "static/js/[name].[contenthash].js",
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: [".tsx", ".ts", ".js"],
   },
   module: {
     rules: [
@@ -29,12 +29,12 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
               presets: [
-                '@babel/preset-env',
-                '@babel/preset-react',
-                '@babel/preset-typescript',
+                "@babel/preset-env",
+                "@babel/preset-react",
+                "@babel/preset-typescript",
               ],
             },
           },
@@ -46,24 +46,17 @@ module.exports = {
       // },
       {
         test: /\.less$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'less-loader',
-        ],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
       },
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-        ],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: [
           {
-            loader: 'url-loader', // 或 'file-loader'
+            loader: "url-loader", // 或 'file-loader'
             options: {
               limit: 8192, // 小于 8KB 的图片将转为 base64 格式
             },
@@ -74,46 +67,46 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all', // 将所有代码分割为多个包
+      chunks: "all", // 将所有代码分割为多个包
     },
     minimizer: [
-      new UglifyJsPlugin({ test: /\.js(\?.*)?$/i, }),
+      new UglifyJsPlugin({ test: /\.js(\?.*)?$/i }),
       new CssMinimizerPlugin(),
     ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: "./public/index.html",
     }),
     new MiniCssExtractPlugin({
-      filename: 'static/css/[name].[contenthash].css',
+      filename: "static/css/[name].[contenthash].css",
     }),
     new OptimizeCssAssetsPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'public',
+          from: "public",
           globOptions: {
             dot: true,
             gitignore: true,
-            ignore: [ '**/*.html' ],
+            ignore: ["**/*.html"],
           },
         },
       ],
-    })
+    }),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'build'),
+      directory: path.join(__dirname, "build"),
     },
     compress: true,
-    port: 8989,
+    port: 8700,
     proxy: {
-      '/form_web': {
+      "/form_web": {
         target: host,
         changeOrigin: true,
-        pathRewrite: { '^/form_web': '/form_web' },
+        pathRewrite: { "^/form_web": "/form_web" },
       },
     },
   },

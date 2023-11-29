@@ -1,0 +1,30 @@
+:global {
+  @import "../../base.less";
+}
+.dialog {
+  position: absolute;
+  z-index: 999;
+  min-width: 13em;
+  max-width: 26em;
+  padding: 0.25em 0;
+  margin: 0.3em;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  list-style-type: none;
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: 0.2em;
+  webkit-box-shadow: 0 2px 5px rgba(0,0,0,.5);
+  box-shadow: 0 2px 5px rgba(0,0,0,.5);
+  .handle {
+    color: #2f2f2f;
+    padding: 0.2em 2em;
+    text-align: left;
+    cursor: pointer;
+  }
+  .handle:hover {
+    background: #2980b6;
+    color: #fff;
+  }
+}

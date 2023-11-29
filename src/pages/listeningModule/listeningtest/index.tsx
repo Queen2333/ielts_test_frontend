@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.less";
+import rangy from "rangy";
+import "rangy/lib/rangy-classapplier";
+import "rangy/lib/rangy-highlighter";
 import TestHeader from "../../../components/testHeader";
 import TestBar from "../../../components/testBar";
 import { useLocation } from "react-router-dom";
 import { Card, Input, Radio, Space } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
+import MarkDialog from "../../../components/markDialog";
 
 const questionModule: any[] = [
   {
@@ -146,9 +150,25 @@ const questionModule: any[] = [
   },
 ];
 const ListeningTest: React.FC = () => {
-  const location = useLocation();
+  // const location = useLocation();
   const [part, setPart] = useState(0);
   const [questionType, setQuestionType] = useState(questionModule);
+  const [mousePosition, setMousePosition] = useState([0, 0]);
+  const [showMark, setShowMark] = useState(false);
+  const [highlighter, setHighlighter] = useState<any>(null);
+  const [selectionRange, setSelectionRange] = useState<any>(null);
+
+  useEffect(() => {
+    rangy.init();
+
+    // 检查是否已创建 highlighter
+    if (!highlighter) {
+      let h = highlighter;
+      h = rangy.createHighlighter();
+      h.addClassApplier(rangy.createClassApplier("highlight"));
+      setHighlighter(h);
+    }
+  }, []);
 
   const chooseQuestion = (part: number, question: number) => {
     console.log(part, question);
@@ -162,18 +182,37 @@ const ListeningTest: React.FC = () => {
     setQuestionType([...questionType]);
   };
 
-  const handleSelect = () => {
-    const selection = window.getSelection();
-    if (selection) {
-      const text = selection.toString();
+  const handleSelect = (e: any) => {
+    const sel = rangy.getSelection();
+    let selection = selectionRange;
+    selection = sel.getRangeAt(0);
+    setSelectionRange(selection);
+    const text = selection.toString();
+    if (text) {
+      setShowMark(true);
+      setMousePosition([e.clientX, e.clientY]);
+    }
+  };
 
-      if (text) console.log(text, "选中的");
-      // setSelectedText(text);
+  const handleMark = (type: string) => {
+    if (highlighter && selectionRange) {
+      if (type === "highlight") {
+        highlighter.highlightRanges("highlight", [selectionRange]);
+      }
+
+      rangy.getSelection().removeAllRanges();
+    } else {
+      console.error("Highlighter or selection range is not initialized");
     }
   };
   return (
-    <div className={styles.step_content} onClick={handleSelect}>
+    <div className={styles.step_content} onMouseUp={handleSelect}>
       <TestHeader />
+      <MarkDialog
+        mousePosition={mousePosition}
+        isShow={showMark}
+        handleMark={handleMark}
+      />
       <div className={styles.test_content}>
         <Card>
           <p className={`${styles.part_title} font-28 fwb`}>
