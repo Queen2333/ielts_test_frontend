@@ -101,7 +101,7 @@ module.exports = {
       directory: path.join(__dirname, "build"),
     },
     compress: true,
-    port: 8700,
+    port: 8087,
     proxy: {
       "/form_web": {
         target: host,

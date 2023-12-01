@@ -157,6 +157,7 @@ const ListeningTest: React.FC = () => {
   const [showMark, setShowMark] = useState(false);
   const [highlighter, setHighlighter] = useState<any>(null);
   const [selectionRange, setSelectionRange] = useState<any>(null);
+  const [selection, setSelection] = useState<any>(null);
 
   useEffect(() => {
     rangy.init();
@@ -183,27 +184,21 @@ const ListeningTest: React.FC = () => {
   };
 
   const handleSelect = (e: any) => {
+    setShowMark(false);
     const sel = rangy.getSelection();
-    let selection = selectionRange;
-    selection = sel.getRangeAt(0);
-    setSelectionRange(selection);
-    const text = selection.toString();
+    setSelection(sel);
+    let _selectionRange = selectionRange;
+    _selectionRange = sel.getRangeAt(0);
+    setSelectionRange(_selectionRange);
+    const text = _selectionRange.toString();
     if (text) {
       setShowMark(true);
       setMousePosition([e.clientX, e.clientY]);
     }
   };
 
-  const handleMark = (type: string) => {
-    if (highlighter && selectionRange) {
-      if (type === "highlight") {
-        highlighter.highlightRanges("highlight", [selectionRange]);
-      }
-
-      rangy.getSelection().removeAllRanges();
-    } else {
-      console.error("Highlighter or selection range is not initialized");
-    }
+  const handleMark = () => {
+    setShowMark(false);
   };
   return (
     <div className={styles.step_content} onMouseUp={handleSelect}>
@@ -212,6 +207,8 @@ const ListeningTest: React.FC = () => {
         mousePosition={mousePosition}
         isShow={showMark}
         handleMark={handleMark}
+        selectionRange={selectionRange}
+        selection={selection}
       />
       <div className={styles.test_content}>
         <Card>
