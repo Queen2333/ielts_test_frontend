@@ -6,7 +6,7 @@ import "rangy/lib/rangy-highlighter";
 import TestHeader from "../../../components/testHeader";
 import TestBar from "../../../components/testBar";
 import { useLocation } from "react-router-dom";
-import { Card, Input, Radio, Space } from "antd";
+import { Card, Input, Radio, Space, Button } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
@@ -197,7 +197,7 @@ const ListeningTest: React.FC = () => {
     }
   };
 
-  const handleMark = () => {
+  const handleMark = (type: any) => {
     setShowMark(false);
   };
   return (

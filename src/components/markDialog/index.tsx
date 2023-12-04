@@ -6,7 +6,7 @@ import "rangy/lib/rangy-highlighter";
 interface markProps {
   mousePosition: number[];
   isShow: boolean;
-  handleMark: () => void;
+  handleMark: (type: string) => void;
   selectionRange: any;
   selection: any;
 }
@@ -20,10 +20,11 @@ const MarkDialog: React.FC<markProps> = ({
 }) => {
   const [highlighter, setHighlighter] = useState<any>(null);
   const [btnDisabled, setBtnDisabled] = useState(true);
+  const [sectionText, setSectionText] = useState("");
 
   useEffect(() => {
     rangy.init();
-    // 检查是否已创建 highlighter
+    // // 检查是否已创建 highlighter
     if (!highlighter) {
       let h = highlighter;
       h = rangy.createHighlighter();
@@ -35,15 +36,18 @@ const MarkDialog: React.FC<markProps> = ({
 
   useEffect(() => {
     const text = selectionRange?.toString();
-    console.log(text, "selectionRange");
-    text ? setBtnDisabled(false) : setBtnDisabled(true);
+    console.log(text, "text");
+    console.log(sectionText, text === sectionText, "selectionRange");
+
+    text === sectionText && text && sectionText
+      ? setBtnDisabled(false)
+      : setBtnDisabled(true);
+    setSectionText(text);
   }, [selectionRange]);
 
   const handleClick = (e: any, type: string) => {
     e.stopPropagation();
-    if (highlighter && selectionRange) {
-      console.log(type, selectionRange, "type");
-
+    if (highlighter) {
       switch (type) {
         case "highlight":
           highlighter.highlightRanges("highlight", [selectionRange]);
@@ -54,7 +58,12 @@ const MarkDialog: React.FC<markProps> = ({
           // rangy.getSelection().removeAllRanges();
           break;
         case "clear":
-          clearSpecificHighlight(selectionRange);
+          const highlights = highlighter.getIntersectingHighlights([
+            selectionRange,
+          ]);
+          highlights.forEach((highlight: any) => {
+            highlight.unapply();
+          });
           break;
         case "clear all":
           highlighter.removeAllHighlights();
@@ -63,25 +72,7 @@ const MarkDialog: React.FC<markProps> = ({
     } else {
       console.error("Highlighter or selection range is not initialized");
     }
-    handleMark();
-  };
-
-  const clearSpecificHighlight = (range: any) => {
-    console.log(rangy.getSelection(), selection, "rangy.getSelection()");
-    const highlights = highlighter.getHighlightsInSelection(selection);
-    console.log(highlights, range, "highlights");
-
-    const highlightToRemove = highlights.find((highlight: any) => {
-      return (
-        highlight.characterRange.start === range.start &&
-        highlight.characterRange.end === range.end
-      );
-    });
-    console.log(highlightToRemove, "highlightToRemove");
-
-    if (highlightToRemove) {
-      highlightToRemove.unapply();
-    }
+    handleMark(type);
   };
 
   return (
