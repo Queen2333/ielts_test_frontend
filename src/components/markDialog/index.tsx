@@ -83,10 +83,10 @@ const MarkDialog: React.FC<markProps> = ({
     handleMark();
   };
 
-  const saveNote = (e: any) => {
+  const saveNote = async (e: any) => {
     // e.stopPropagation();
+    console.log(e);
     // setShowNote(false);
-    // console.log(e);
   };
   return (
     <div>
@@ -99,12 +99,13 @@ const MarkDialog: React.FC<markProps> = ({
           }}
         >
           <div className={styles.note_header}>
-            <img
-              src={closeIcon}
-              alt=""
-              className={styles.close_icon}
+            <div
+              className="flex-alc"
+              style={{ width: "16px" }}
               onClick={(e) => saveNote(e)}
-            />
+            >
+              <img src={closeIcon} alt="" className={styles.close_icon} />
+            </div>
           </div>
           <div className={styles.note_edit}>
             <Input size="middle" />
