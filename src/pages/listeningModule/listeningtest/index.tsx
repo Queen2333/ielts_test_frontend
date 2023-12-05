@@ -186,18 +186,18 @@ const ListeningTest: React.FC = () => {
   const handleSelect = (e: any) => {
     setShowMark(false);
     const sel = rangy.getSelection();
-    setSelection(sel);
-    let _selectionRange = selectionRange;
-    _selectionRange = sel.getRangeAt(0);
-    setSelectionRange(_selectionRange);
+    const _selectionRange = sel.getRangeAt(0);
     const text = _selectionRange.toString();
+
     if (text) {
+      setSelection(sel);
+      setSelectionRange(_selectionRange);
       setShowMark(true);
       setMousePosition([e.clientX, e.clientY]);
     }
   };
 
-  const handleMark = (type: any) => {
+  const handleMark = () => {
     setShowMark(false);
   };
   return (

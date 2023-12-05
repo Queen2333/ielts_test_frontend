@@ -3,10 +3,13 @@ import styles from "./styles.module.less";
 import rangy from "rangy";
 import "rangy/lib/rangy-classapplier";
 import "rangy/lib/rangy-highlighter";
+import closeIcon from "../../assets/close_icon.png";
+import { Input } from "antd";
+
 interface markProps {
   mousePosition: number[];
   isShow: boolean;
-  handleMark: (type: string) => void;
+  handleMark: () => void;
   selectionRange: any;
   selection: any;
 }
@@ -20,7 +23,7 @@ const MarkDialog: React.FC<markProps> = ({
 }) => {
   const [highlighter, setHighlighter] = useState<any>(null);
   const [btnDisabled, setBtnDisabled] = useState(true);
-  const [sectionText, setSectionText] = useState("");
+  const [showNote, setShowNote] = useState(false);
 
   useEffect(() => {
     rangy.init();
@@ -36,47 +39,79 @@ const MarkDialog: React.FC<markProps> = ({
 
   useEffect(() => {
     const text = selectionRange?.toString();
-    console.log(text, "text");
-    console.log(sectionText, text === sectionText, "selectionRange");
-
-    text === sectionText && text && sectionText
-      ? setBtnDisabled(false)
-      : setBtnDisabled(true);
-    setSectionText(text);
+    if (text) {
+      const highlights = highlighter.getIntersectingHighlights([
+        selectionRange,
+      ]);
+      const className = highlights[0]?.classApplier.className;
+      className === "highlight" || className === "note"
+        ? setBtnDisabled(false)
+        : setBtnDisabled(true);
+    }
   }, [selectionRange]);
 
   const handleClick = (e: any, type: string) => {
     e.stopPropagation();
-    if (highlighter) {
+    if (highlighter && selectionRange) {
       switch (type) {
         case "highlight":
+          selection.removeAllRanges();
           highlighter.highlightRanges("highlight", [selectionRange]);
-          // rangy.getSelection().removeAllRanges();
           break;
         case "note":
+          selection.removeAllRanges();
           highlighter.highlightRanges("note", [selectionRange]);
-          // rangy.getSelection().removeAllRanges();
+          setShowNote(true);
           break;
         case "clear":
-          const highlights = highlighter.getIntersectingHighlights([
-            selectionRange,
-          ]);
-          highlights.forEach((highlight: any) => {
-            highlight.unapply();
-          });
+          if (!btnDisabled) {
+            const highlights = highlighter.getIntersectingHighlights([
+              selectionRange,
+            ]);
+            highlighter.removeHighlights(highlights);
+          }
           break;
         case "clear all":
-          highlighter.removeAllHighlights();
+          if (!btnDisabled) {
+            highlighter.removeAllHighlights();
+          }
           break;
       }
     } else {
       console.error("Highlighter or selection range is not initialized");
     }
-    handleMark(type);
+    handleMark();
   };
 
+  const saveNote = (e: any) => {
+    // e.stopPropagation();
+    // setShowNote(false);
+    // console.log(e);
+  };
   return (
     <div>
+      {showNote && (
+        <div
+          className={styles.notebook}
+          style={{
+            left: `${mousePosition[0]}px`,
+            top: `${mousePosition[1]}px`,
+          }}
+        >
+          <div className={styles.note_header}>
+            <img
+              src={closeIcon}
+              alt=""
+              className={styles.close_icon}
+              onClick={(e) => saveNote(e)}
+            />
+          </div>
+          <div className={styles.note_edit}>
+            <Input size="middle" />
+            <Input.TextArea size="middle" className="mt-6" autoSize />
+          </div>
+        </div>
+      )}
       {isShow && (
         <div
           className={styles.dialog}

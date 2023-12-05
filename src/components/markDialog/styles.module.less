@@ -3,6 +3,10 @@
   .highlight, .note {
     background-color: yellow;
   }
+  .ant-input {
+    background-color: transparent;
+    border-width: 2px;
+  }
 }
 .dialog {
   position: absolute;
@@ -32,5 +36,34 @@
   }
   .btnDisabled {
     color: #bbb;
+  }
+}
+.notebook {
+  z-index: 9999;
+  width: 200px;
+  background-color: rgb(255, 240, 70);
+  color: #333 !important;
+  position: absolute;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+  -moz-border-radius: 0.357em;
+  border-radius: 0.357em;
+  overflow: hidden;
+  .note_header {
+    background-color: #db0;
+    border-bottom: 1px solid #a80;
+    height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 5px;
+    .close_icon {
+      width: 16px;
+    }
+  }
+  .note_edit {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 250px;
+    padding: 5px;
   }
 }
