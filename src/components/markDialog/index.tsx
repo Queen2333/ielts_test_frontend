@@ -106,8 +106,12 @@ const MarkDialog: React.FC<markProps> = ({
     setDataMap(newMap);
   };
 
-  const inputEvent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const inputNote = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCurrentNote(e.target.value);
+  };
+
+  const inputWord = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentTxt(e.target.value);
   };
 
   return (
@@ -130,13 +134,13 @@ const MarkDialog: React.FC<markProps> = ({
             </div>
           </div>
           <div className={styles.note_edit}>
-            <Input size="middle" value={currentTxt} />
+            <Input size="middle" value={currentTxt} onChange={inputWord} />
             <Input.TextArea
               size="middle"
               className="mt-6"
               autoSize
               value={currentNote}
-              onChange={inputEvent}
+              onChange={inputNote}
             />
           </div>
         </div>

@@ -6,7 +6,7 @@ import "rangy/lib/rangy-highlighter";
 import TestHeader from "../../../components/testHeader";
 import TestBar from "../../../components/testBar";
 import { useLocation } from "react-router-dom";
-import { Card, Input, Radio, Space, Button } from "antd";
+import { Card, Input, Radio, Space, Button, Checkbox } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
@@ -19,28 +19,47 @@ const questionModule: any[] = [
       {
         type: "fill_in_blanks",
         title: "Complete the notes below. Write ONE WORD ONLY for each answer.",
-        question: "Name: Anna [blank1]",
-        answer: "",
+        article_content: (
+          <div>
+            The total rent: Peter £ 110 & Jim £
+            <Input className={styles.input_style} placeholder="1" />
+            <br />
+            Car parking: in the
+            <Input className={styles.input_style} placeholder="2" />
+            <br />
+            A place to buy things:
+            <Input className={styles.input_style} placeholder="3" />, because
+            Jim works there.
+            <br />
+            The fees they should share:
+            <Input className={styles.input_style} placeholder="4" />
+            fees
+          </div>
+        ),
         question_list: [
           {
             id: 1,
-            no: 1,
+            no: "1",
             position: 10,
+            answer: "",
           },
           {
             id: 2,
-            no: 2,
+            no: "2",
             position: 25,
+            answer: "",
           },
           {
             id: 3,
-            no: 3,
+            no: "3",
             position: 40,
+            answer: "",
           },
           {
             id: 4,
-            no: 4,
+            no: "4",
             position: 50,
+            answer: "",
           },
         ],
       },
@@ -50,7 +69,7 @@ const questionModule: any[] = [
         question_list: [
           {
             id: 55,
-            no: 5,
+            no: "5",
             question: "The company deals mostly with:",
             answer: "",
             options: [
@@ -61,7 +80,7 @@ const questionModule: any[] = [
           },
           {
             id: 66,
-            no: 6,
+            no: "6",
             question: "The overseas consultants deal mostly with:",
             answer: "",
             options: [
@@ -78,39 +97,49 @@ const questionModule: any[] = [
         question_list: [
           {
             id: 77,
-            no: 7,
-            question: "",
-            answer: "",
+            no: "7-8",
+            answer_count: 2,
+            question:
+              "Which THREE things do Phil and Stella still have to decide on?",
+            answer: [],
             options: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
-              { label: "E", text: "" },
+              { label: "A", text: "how to analyse their results" },
+              { label: "B", text: "their methods of presentation" },
+              { label: "C", text: "the design of their questionnaire" },
+              { label: "D", text: "the location of their survey" },
+              { label: "E", text: "weather variables to be measured" },
             ],
           },
           {
             id: 88,
-            no: 8,
-            question: "",
-            answer: "",
+            no: "9-10",
+            answer_count: 2,
+            question:
+              "Which THREE things do Phil and Stella still have to decide on?",
+            answer: [],
             options: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
-              { label: "E", text: "" },
+              { label: "A", text: "how to analyse their results" },
+              { label: "B", text: "their methods of presentation" },
+              { label: "C", text: "the design of their questionnaire" },
+              { label: "D", text: "the location of their survey" },
+              { label: "E", text: "weather variables to be measured" },
             ],
           },
         ],
       },
+    ],
+  },
+  {
+    part: "Part 2",
+    partNumber: "11-20",
+    type_list: [
       {
         type: "matching",
         title: "",
         question_list: [
           {
             id: 88,
-            no: 9,
+            no: "11",
             answer: "",
             descriptions: [
               { label: "A", text: "" },
@@ -132,11 +161,6 @@ const questionModule: any[] = [
         ],
       },
     ],
-  },
-  {
-    part: "Part 2",
-    partNumber: "11-20",
-    type_list: [],
   },
   {
     part: "Part 3",
@@ -176,14 +200,22 @@ const ListeningTest: React.FC = () => {
     setPart(part);
   };
 
-  const changeChoice = (e: RadioChangeEvent, index: number, idx: number) => {
+  const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
-    questionType[part].type_list[index].question_list[idx].answer =
-      e.target.value;
+    switch (type) {
+      case "choice":
+        e.stopPropagation();
+        questionType[part].type_list[index].question_list[idx].answer =
+          e.target.value;
+        break;
+      case "multi_choice":
+        questionType[part].type_list[index].question_list[idx].answer = e;
+    }
     setQuestionType([...questionType]);
   };
 
   const handleSelect = (e: any) => {
+    console.log("onMouseUp");
     setShowMark(false);
     const sel = rangy.getSelection();
     const _selectionRange = sel.getRangeAt(0);
@@ -223,13 +255,14 @@ const ListeningTest: React.FC = () => {
           {questionType[part].type_list.map((item: any, index: number) => (
             <div key={index}>
               <p>{item.title}</p>
+              {item.type === "fill_in_blanks" && item.article_content}
               {item.type === "choice" &&
                 item.question_list.map((i: any, idx: number) => (
                   <div key={idx}>
                     <p>{`${i.no} ${i.question}`}</p>
                     <Radio.Group
                       value={i.answer}
-                      onChange={(e) => changeChoice(e, index, idx)}
+                      onChange={(e) => changeChoice(e, index, idx, item.type)}
                     >
                       <Space direction="vertical">
                         {i.options.map((value: any, id: number) => (
@@ -239,6 +272,30 @@ const ListeningTest: React.FC = () => {
                         ))}
                       </Space>
                     </Radio.Group>
+                  </div>
+                ))}
+              {item.type === "multi_choice" &&
+                item.question_list.map((i: any, idx: number) => (
+                  <div key={idx}>
+                    <p>{`${i.no} ${i.question}`}</p>
+                    <Checkbox.Group
+                      value={i.answer}
+                      onChange={(e) => changeChoice(e, index, idx, item.type)}
+                    >
+                      <Space direction="vertical">
+                        {i.options.map((value: any, id: number) => (
+                          <Checkbox
+                            value={value.label}
+                            key={id}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            {value.label}. {value.text}
+                          </Checkbox>
+                        ))}
+                      </Space>
+                    </Checkbox.Group>
                   </div>
                 ))}
             </div>
