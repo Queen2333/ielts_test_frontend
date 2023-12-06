@@ -2,6 +2,18 @@
   @import "../../base.less";
   .highlight, .note {
     background-color: yellow;
+    position: relative;
+  }
+  .note:hover:after {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-color: #e9ad21;
+    border: 2px solid #e5a308;
+    position: absolute;
+    top: -3px;
+    right: 2px;
+    z-index: 9999;
   }
   .ant-input {
     background-color: transparent;

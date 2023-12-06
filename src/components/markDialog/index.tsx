@@ -24,6 +24,9 @@ const MarkDialog: React.FC<markProps> = ({
   const [highlighter, setHighlighter] = useState<any>(null);
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [showNote, setShowNote] = useState(false);
+  const [currentTxt, setCurrentTxt] = useState("");
+  const [currentNote, setCurrentNote] = useState("");
+  const [dataMap, setDataMap] = useState(new Map());
 
   useEffect(() => {
     rangy.init();
@@ -39,14 +42,20 @@ const MarkDialog: React.FC<markProps> = ({
 
   useEffect(() => {
     const text = selectionRange?.toString();
+    setCurrentTxt(text);
     if (text) {
       const highlights = highlighter.getIntersectingHighlights([
         selectionRange,
       ]);
       const className = highlights[0]?.classApplier.className;
-      className === "highlight" || className === "note"
-        ? setBtnDisabled(false)
-        : setBtnDisabled(true);
+      className === "highlight" ? setBtnDisabled(false) : setBtnDisabled(true);
+      if (className === "note") {
+        dataMap.get(text)
+          ? setCurrentNote(dataMap.get(text))
+          : setCurrentNote("");
+        setShowNote(true);
+        handleMark();
+      }
     }
   }, [selectionRange]);
 
@@ -59,6 +68,12 @@ const MarkDialog: React.FC<markProps> = ({
           highlighter.highlightRanges("highlight", [selectionRange]);
           break;
         case "note":
+          const text = selectionRange.toString();
+          setCurrentTxt(text);
+          dataMap.get(text)
+            ? setCurrentNote(dataMap.get(text))
+            : setCurrentNote("");
+
           selection.removeAllRanges();
           highlighter.highlightRanges("note", [selectionRange]);
           setShowNote(true);
@@ -84,10 +99,17 @@ const MarkDialog: React.FC<markProps> = ({
   };
 
   const saveNote = async (e: any) => {
-    // e.stopPropagation();
-    console.log(e);
-    // setShowNote(false);
+    e.stopPropagation();
+    setShowNote(false);
+    const newMap = new Map(dataMap);
+    newMap.set(currentTxt, currentNote);
+    setDataMap(newMap);
   };
+
+  const inputEvent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCurrentNote(e.target.value);
+  };
+
   return (
     <div>
       {showNote && (
@@ -102,14 +124,20 @@ const MarkDialog: React.FC<markProps> = ({
             <div
               className="flex-alc"
               style={{ width: "16px" }}
-              onClick={(e) => saveNote(e)}
+              onMouseUp={(e) => saveNote(e)}
             >
               <img src={closeIcon} alt="" className={styles.close_icon} />
             </div>
           </div>
           <div className={styles.note_edit}>
-            <Input size="middle" />
-            <Input.TextArea size="middle" className="mt-6" autoSize />
+            <Input size="middle" value={currentTxt} />
+            <Input.TextArea
+              size="middle"
+              className="mt-6"
+              autoSize
+              value={currentNote}
+              onChange={inputEvent}
+            />
           </div>
         </div>
       )}
