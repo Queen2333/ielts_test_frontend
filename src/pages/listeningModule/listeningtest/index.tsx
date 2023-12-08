@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles.module.less";
 import rangy from "rangy";
+import { useDrag, useDrop } from "react-dnd";
 import "rangy/lib/rangy-classapplier";
 import "rangy/lib/rangy-highlighter";
 import TestHeader from "../../../components/testHeader";
@@ -122,18 +123,56 @@ const questionModule: any[] = [
     type_list: [
       {
         type: "matching",
-        title: "",
+        title:
+          "What can you find at each of the places below?Choose the correct answer and move it into the gap.",
+        options: [
+          { label: "A", text: "flower", id: 1223 },
+          { label: "B", text: "grass", id: 1244 },
+          { label: "C", text: "glass", id: 1255 },
+          { label: "D", text: "tree", id: 1266 },
+          { label: "E", text: "leave", id: 1277 },
+        ],
         question_list: [
           {
             id: 88,
             no: "11",
             answer: "",
+            question: "Anna",
+          },
+          {
+            id: 99,
+            no: "12",
+            answer: "",
+            question: "Benny",
+          },
+          {
+            id: 100,
+            no: "13",
+            answer: "",
+            question: "John",
+          },
+          {
+            id: 111,
+            no: "14",
+            answer: "",
+            question: "James",
+          },
+        ],
+      },
+      {
+        type: "map",
+        title: "",
+        question_list: [
+          {
+            id: 120,
+            no: "15-18",
+            answer: [],
+            answer_count: 4,
             descriptions: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
-              { label: "E", text: "" },
+              { label: "15", text: "" },
+              { label: "16", text: "" },
+              { label: "17", text: "" },
+              { label: "18", text: "" },
             ],
             options: [
               { label: "A", text: "" },
@@ -175,12 +214,15 @@ const ListeningTest: React.FC = () => {
     typeIndex: 0,
     questionIndex: 0,
   });
-  // const fillInBlanksQuestions = questionModule.flatMap((part) =>
-  //   part.type_list
-  //     .filter((type: any) => type.type === "fill_in_blanks")
-  //     .map((type: any) => type.question_list)
-  // );
-  const inputRefs = Array.from({ length: 10 }, () => useRef(null));
+  const [inputRefs, setInputRefs] = useState(
+    Array.from({ length: 4 }, () =>
+      Array.from({ length: 10 }, () =>
+        useRef({
+          focus: () => {},
+        })
+      )
+    )
+  );
 
   useEffect(() => {
     rangy.init();
@@ -192,21 +234,43 @@ const ListeningTest: React.FC = () => {
       h.addClassApplier(rangy.createClassApplier("highlight"));
       setHighlighter(h);
     }
+    // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    //   // 在这里可以添加你的逻辑，比如确认用户是否要离开页面
+    //   const message = "您确定要离开吗？";
+    //   event.returnValue = message; // 兼容旧版浏览器
+    //   return message;
+    // };
+
+    // window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // return () => {
+    //   // 清除事件监听器
+    //   window.removeEventListener("beforeunload", handleBeforeUnload);
+    // };
   }, []);
 
   // 切换底部bar题号
   const chooseQuestion = (part: number, question: number) => {
     setPart(part);
+    // 找出是哪个type
     const targetPart = questionType[part];
     let typeIndex = 0;
-    let question_count = targetPart.type_list[0].question_list.length;
+    let question_count = ["multi_choice", "map"].includes(
+      targetPart.type_list[0].type
+    )
+      ? targetPart.type_list[0].question_list[0].answer_count
+      : targetPart.type_list[0].question_list.length;
     if (targetPart && targetPart.type_list) {
       while (
         typeIndex < targetPart.type_list.length &&
         question_count - 1 < question
       ) {
         typeIndex++;
-        if (targetPart.type_list?.[typeIndex]?.type === "multi_choice") {
+        if (
+          ["multi_choice", "map"].includes(
+            targetPart.type_list?.[typeIndex]?.type
+          )
+        ) {
           const totalAnswerCount = targetPart.type_list?.[
             typeIndex
           ]?.question_list.reduce(
@@ -223,27 +287,18 @@ const ListeningTest: React.FC = () => {
     console.log(part, typeIndex, question);
 
     // 聚焦题目
-    switch (targetPart.type_list[typeIndex].type) {
-      case "fill_in_blanks":
-        inputRefs[question] && inputRefs[question].current.focus();
-        break;
-      case "choice":
-        setCurrentFocus({
-          type: "choice",
-          partIndex: part,
-          typeIndex,
-          questionIndex: question,
-        });
-        break;
-      case "multi_choice":
-        setCurrentFocus({
-          type: "multi_choice",
-          partIndex: part,
-          typeIndex,
-          questionIndex: question,
-        });
-        break;
-    }
+    setCurrentFocus({
+      type: targetPart.type_list[typeIndex].type,
+      partIndex: part,
+      typeIndex,
+      questionIndex: question,
+    });
+
+    setTimeout(() => {
+      if (targetPart.type_list[typeIndex].type === "fill_in_blanks") {
+        inputRefs[part][question] && inputRefs[part][question].current.focus();
+      }
+    }, 0);
   };
 
   // 切换答案
@@ -268,6 +323,7 @@ const ListeningTest: React.FC = () => {
 
   // 选中内容
   const handleSelect = (e: any) => {
+    console.log(e, "onMouseUp");
     try {
       setShowMark(false);
       const sel = rangy.getSelection();
@@ -305,6 +361,79 @@ const ListeningTest: React.FC = () => {
     });
   };
 
+  const DraggableItem = ({ id, text, onDrop }: any) => {
+    const [, drag] = useDrag({
+      item: { id, text },
+      type: "MATCH_ITEM",
+    });
+
+    return (
+      <div
+        ref={drag}
+        style={{
+          cursor: "move",
+          border: "1px solid #ccc",
+          padding: "8px",
+          margin: "8px",
+          backgroundColor: "lightgray",
+        }}
+      >
+        {text}
+      </div>
+    );
+  };
+
+  const DroppableTarget = ({ id, onDrop }: any) => {
+    const [{ isOver }, drop] = useDrop({
+      accept: "MATCH_ITEM",
+      drop: (item) => onDrop(id, item),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    });
+
+    return (
+      <div
+        ref={drop}
+        style={{
+          border: "2px dashed #ccc",
+          padding: "16px",
+          margin: "8px",
+          backgroundColor: isOver ? "lightyellow" : "white",
+        }}
+      >
+        Drop here
+      </div>
+    );
+  };
+
+  const handleDrop = (targetId: number, item: any) => {
+    // 处理拖拽完成后的逻辑，比如更新答案等
+    console.log(`Dropped item ${item.text} onto target ${targetId}`);
+    const targetQuestion = findQuestionById(targetId); // 你可能需要根据目标的 id 找到相应的问题
+    if (targetQuestion) {
+      // 根据你的逻辑更新答案
+      // targetQuestion.answer = item.text;
+      // setQuestionType([...questionType]); // 更新 state，触发重新渲染
+    }
+  };
+
+  const findQuestionById = (targetId: number) => {
+    for (const part of questionType) {
+      for (const type of part.type_list) {
+        // 在 type 中查找特定 id 的问题
+        const targetQuestion = type.question_list.find(
+          (question: any) => question.id === targetId
+        );
+
+        if (targetQuestion) {
+          return targetQuestion;
+        }
+      }
+    }
+
+    return null;
+  };
   return (
     <div className={styles.step_content} onMouseUp={handleSelect}>
       <TestHeader />
@@ -337,7 +466,11 @@ const ListeningTest: React.FC = () => {
                         <span dangerouslySetInnerHTML={{ __html: i }} />
                         {idx < item.question_list.length && (
                           <Input
-                            ref={inputRefs[idx]}
+                            ref={
+                              inputRefs[part][
+                                Number(item.question_list[idx].no) - 1
+                              ]
+                            }
                             type="text"
                             className={styles.input_style}
                             value={item.question_list[idx].answer}
@@ -427,6 +560,16 @@ const ListeningTest: React.FC = () => {
                     </div>
                   ))}
               </div>
+              {item.type === "matching" && (
+                <div style={{ display: "flex" }}>
+                  <DraggableItem id={1} text="Option 1" onDrop={handleDrop} />
+                  <DraggableItem id={2} text="Option 2" onDrop={handleDrop} />
+                  <DraggableItem id={3} text="Option 3" onDrop={handleDrop} />
+                  <DroppableTarget id={101} onDrop={handleDrop} />
+                  <DroppableTarget id={102} onDrop={handleDrop} />
+                  <DroppableTarget id={103} onDrop={handleDrop} />
+                </div>
+              )}
             </div>
           ))}
         </Card>
