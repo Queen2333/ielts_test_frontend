@@ -6,9 +6,17 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 interface PartProps {
   chooseQuestion: (part: number, question: number) => void;
   questionList: any[];
+  currentFocus: {
+    partIndex: number;
+    questionIndex: number;
+  };
 }
 
-const TestBar: React.FC<PartProps> = ({ chooseQuestion, questionList }) => {
+const TestBar: React.FC<PartProps> = ({
+  chooseQuestion,
+  questionList,
+  currentFocus,
+}) => {
   const [partList, setPartList] = useState(questionList);
   const [currentPart, setCurrentPart] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -21,6 +29,11 @@ const TestBar: React.FC<PartProps> = ({ chooseQuestion, questionList }) => {
   useEffect(() => {
     chooseQuestion(currentPart, currentQuestion);
   }, [currentPart, currentQuestion]);
+
+  useEffect(() => {
+    console.log(currentFocus, "currentFocus");
+    selectQuestion(currentFocus.partIndex, currentFocus.questionIndex);
+  }, [currentFocus.partIndex, currentFocus.questionIndex]);
 
   const onChange = (e: CheckboxChangeEvent) => {
     partList[currentPart].children[currentQuestion].isReview = e.target.checked;

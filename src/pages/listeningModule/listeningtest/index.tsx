@@ -55,7 +55,7 @@ const questionModule: any[] = [
         title: "Choose One letters, A-D.",
         question_list: [
           {
-            id: 55,
+            id: 5,
             no: "5",
             question: "The company deals mostly with:",
             answer: "",
@@ -66,7 +66,7 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: 66,
+            id: 6,
             no: "6",
             question: "The overseas consultants deal mostly with:",
             answer: "",
@@ -83,7 +83,7 @@ const questionModule: any[] = [
         title: "Choose TWO letters, A-E.",
         question_list: [
           {
-            id: 77,
+            id: 7,
             no: "7-8",
             answer_count: 2,
             question:
@@ -98,7 +98,7 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: 88,
+            id: 9,
             no: "9-10",
             answer_count: 2,
             question:
@@ -169,7 +169,12 @@ const ListeningTest: React.FC = () => {
   const [highlighter, setHighlighter] = useState<any>(null);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selection, setSelection] = useState<any>(null);
-  const [currentFocus, setCurrentFocus] = useState({ type: "choice", idx: 0 });
+  const [currentFocus, setCurrentFocus] = useState({
+    type: "choice",
+    partIndex: 0,
+    typeIndex: 0,
+    questionIndex: 0,
+  });
   // const fillInBlanksQuestions = questionModule.flatMap((part) =>
   //   part.type_list
   //     .filter((type: any) => type.type === "fill_in_blanks")
@@ -189,8 +194,8 @@ const ListeningTest: React.FC = () => {
     }
   }, []);
 
+  // 切换底部bar题号
   const chooseQuestion = (part: number, question: number) => {
-    console.log(part, question);
     setPart(part);
     const targetPart = questionType[part];
     let typeIndex = 0;
@@ -201,16 +206,47 @@ const ListeningTest: React.FC = () => {
         question_count - 1 < question
       ) {
         typeIndex++;
-        question_count +=
-          targetPart.type_list?.[typeIndex]?.question_list.length;
+        if (targetPart.type_list?.[typeIndex]?.type === "multi_choice") {
+          const totalAnswerCount = targetPart.type_list?.[
+            typeIndex
+          ]?.question_list.reduce(
+            (total: number, item: any) => total + item.answer_count,
+            0
+          );
+          question_count += totalAnswerCount;
+        } else {
+          question_count +=
+            targetPart.type_list?.[typeIndex]?.question_list.length;
+        }
       }
     }
-    if (targetPart.type_list[typeIndex].type === "fill_in_blanks") {
-      console.log(inputRefs[typeIndex], "inputRefs");
-      inputRefs[question].current.focus();
+    console.log(part, typeIndex, question);
+
+    // 聚焦题目
+    switch (targetPart.type_list[typeIndex].type) {
+      case "fill_in_blanks":
+        inputRefs[question] && inputRefs[question].current.focus();
+        break;
+      case "choice":
+        setCurrentFocus({
+          type: "choice",
+          partIndex: part,
+          typeIndex,
+          questionIndex: question,
+        });
+        break;
+      case "multi_choice":
+        setCurrentFocus({
+          type: "multi_choice",
+          partIndex: part,
+          typeIndex,
+          questionIndex: question,
+        });
+        break;
     }
   };
 
+  // 切换答案
   const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
     switch (type) {
@@ -230,9 +266,9 @@ const ListeningTest: React.FC = () => {
     setQuestionType([...questionType]);
   };
 
+  // 选中内容
   const handleSelect = (e: any) => {
     try {
-      console.log("onMouseUp");
       setShowMark(false);
       const sel = rangy.getSelection();
       const _selectionRange = sel.getRangeAt(0);
@@ -249,14 +285,23 @@ const ListeningTest: React.FC = () => {
     }
   };
 
+  // 操作笔记或者高亮等
   const handleMark = () => {
     setShowMark(false);
   };
 
-  const focusQues = (type: string, idx: number) => {
+  // 聚焦题目事件
+  const focusQues = (
+    type: string,
+    typeIndex: number,
+    questionIndex: string
+  ) => {
+    console.log(type, typeIndex, questionIndex, "focus");
     setCurrentFocus({
       type,
-      idx,
+      partIndex: part,
+      typeIndex,
+      questionIndex: Number(questionIndex) - 1,
     });
   };
 
@@ -300,6 +345,13 @@ const ListeningTest: React.FC = () => {
                             onChange={(e) =>
                               changeChoice(e, index, idx, item.type)
                             }
+                            onFocus={() =>
+                              focusQues(
+                                item.type,
+                                index,
+                                item.question_list[idx].no
+                              )
+                            }
                           />
                         )}
                       </span>
@@ -311,8 +363,14 @@ const ListeningTest: React.FC = () => {
                   item.question_list.map((i: any, idx: number) => (
                     <div key={idx} style={{ width: "50%" }} className="mb-30">
                       <p
-                        className={`mb-20 lh-2rem font-1rem fwb`}
-                        onClick={() => focusQues(item.type, idx)}
+                        className={`mb-20 lh-2rem font-1rem fwb pointer ${
+                          currentFocus.type === "choice" &&
+                          currentFocus.typeIndex === index &&
+                          currentFocus.questionIndex === Number(i.no) - 1
+                            ? styles.selected_background
+                            : ""
+                        }`}
+                        onClick={() => focusQues(item.type, index, i.no)}
                       >{`${i.no} ${i.question}`}</p>
                       <Radio.Group
                         style={{ fontSize: "1rem" }}
@@ -332,7 +390,21 @@ const ListeningTest: React.FC = () => {
                 {item.type === "multi_choice" &&
                   item.question_list.map((i: any, idx: number) => (
                     <div key={idx} style={{ width: "50%" }} className="mb-30">
-                      <p className="mb-20 lh-2rem font-1rem fwb">{`${i.no} ${i.question}`}</p>
+                      <p
+                        className={`mb-20 lh-2rem font-1rem fwb pointer ${
+                          currentFocus.type === "multi_choice" &&
+                          currentFocus.typeIndex === index &&
+                          currentFocus.questionIndex >=
+                            Number(i.no.split("-")[0]) - 1 &&
+                          currentFocus.questionIndex <=
+                            Number(i.no.split("-")[1]) - 1
+                            ? styles.selected_background
+                            : ""
+                        }`}
+                        onClick={() =>
+                          focusQues(item.type, index, i.no.split("-")[0])
+                        }
+                      >{`${i.no} ${i.question}`}</p>
                       <Checkbox.Group
                         style={{ fontSize: "1rem" }}
                         value={i.answer}
@@ -361,6 +433,7 @@ const ListeningTest: React.FC = () => {
         <TestBar
           chooseQuestion={chooseQuestion}
           questionList={listeningQuestionNumber}
+          currentFocus={currentFocus}
         />
       </div>
     </div>
