@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styles from "./styles.module.less";
 import rangy from "rangy";
-import { useDrag, useDrop } from "react-dnd";
 import "rangy/lib/rangy-classapplier";
 import "rangy/lib/rangy-highlighter";
 import TestHeader from "../../../components/testHeader";
@@ -361,79 +361,24 @@ const ListeningTest: React.FC = () => {
     });
   };
 
-  const DraggableItem = ({ id, text, onDrop }: any) => {
-    const [, drag] = useDrag({
-      item: { id, text },
-      type: "MATCH_ITEM",
-    });
+  const [items, setItems] = useState([
+    { id: "item-1", content: "Option 1" },
+    { id: "item-2", content: "Option 2" },
+    { id: "item-3", content: "Option 3" },
+  ]);
 
-    return (
-      <div
-        ref={drag}
-        style={{
-          cursor: "move",
-          border: "1px solid #ccc",
-          padding: "8px",
-          margin: "8px",
-          backgroundColor: "lightgray",
-        }}
-      >
-        {text}
-      </div>
-    );
-  };
-
-  const DroppableTarget = ({ id, onDrop }: any) => {
-    const [{ isOver }, drop] = useDrop({
-      accept: "MATCH_ITEM",
-      drop: (item) => onDrop(id, item),
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    });
-
-    return (
-      <div
-        ref={drop}
-        style={{
-          border: "2px dashed #ccc",
-          padding: "16px",
-          margin: "8px",
-          backgroundColor: isOver ? "lightyellow" : "white",
-        }}
-      >
-        Drop here
-      </div>
-    );
-  };
-
-  const handleDrop = (targetId: number, item: any) => {
-    // 处理拖拽完成后的逻辑，比如更新答案等
-    console.log(`Dropped item ${item.text} onto target ${targetId}`);
-    const targetQuestion = findQuestionById(targetId); // 你可能需要根据目标的 id 找到相应的问题
-    if (targetQuestion) {
-      // 根据你的逻辑更新答案
-      // targetQuestion.answer = item.text;
-      // setQuestionType([...questionType]); // 更新 state，触发重新渲染
-    }
-  };
-
-  const findQuestionById = (targetId: number) => {
-    for (const part of questionType) {
-      for (const type of part.type_list) {
-        // 在 type 中查找特定 id 的问题
-        const targetQuestion = type.question_list.find(
-          (question: any) => question.id === targetId
-        );
-
-        if (targetQuestion) {
-          return targetQuestion;
-        }
-      }
+  const handleDragEnd = (result) => {
+    if (!result.destination) {
+      return;
     }
 
-    return null;
+    const newItems = Array.from(items);
+    const [reorderedItem] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, reorderedItem);
+
+    setItems(newItems);
   };
+
   return (
     <div className={styles.step_content} onMouseUp={handleSelect}>
       <TestHeader />
@@ -561,14 +506,34 @@ const ListeningTest: React.FC = () => {
                   ))}
               </div>
               {item.type === "matching" && (
-                <div style={{ display: "flex" }}>
-                  <DraggableItem id={1} text="Option 1" onDrop={handleDrop} />
-                  <DraggableItem id={2} text="Option 2" onDrop={handleDrop} />
-                  <DraggableItem id={3} text="Option 3" onDrop={handleDrop} />
-                  <DroppableTarget id={101} onDrop={handleDrop} />
-                  <DroppableTarget id={102} onDrop={handleDrop} />
-                  <DroppableTarget id={103} onDrop={handleDrop} />
-                </div>
+                // <div style={{ display: "flex" }}>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <Droppable droppableId="droppable">
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                        {items.map((item, index) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                {item.content}
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+                // </div>
               )}
             </div>
           ))}
