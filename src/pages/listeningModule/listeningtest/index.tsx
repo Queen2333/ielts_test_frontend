@@ -367,20 +367,46 @@ const ListeningTest: React.FC = () => {
     { id: "item-3", content: "Option 3" },
   ]);
 
+  const [targets, setTargets] = useState([
+    { id: "target-1", content: "Target 1", matchedItemId: null },
+    { id: "target-2", content: "Target 2", matchedItemId: null },
+    { id: "target-3", content: "Target 3", matchedItemId: null },
+  ]);
+
   const handleDragEnd = (result) => {
+    console.log("result.draggableId:", result.draggableId);
+    console.log("result.destination:", result.destination);
     if (!result.destination) {
       return;
     }
 
-    const newItems = Array.from(items);
-    const [reorderedItem] = newItems.splice(result.source.index, 1);
-    newItems.splice(result.destination.index, 0, reorderedItem);
+    const sourceItem = items.find((item) => item.id === result.draggableId);
+    const target = targets.find(
+      (target) => target.id === result.destination.droppableId
+    );
 
-    setItems(newItems);
+    // 更新匹配关系
+    if (target) {
+      const updatedTargets = [...targets];
+      const matchedItem = items.find((item) => item.id === result.draggableId);
+
+      if (matchedItem) {
+        const targetIndex = updatedTargets.findIndex((t) => t.id === target.id);
+        updatedTargets[targetIndex].matchedItemId = matchedItem.id;
+        setTargets(updatedTargets);
+      }
+    }
   };
 
+  const onDragStart = (result) => {
+    console.log("onDragStart", result);
+  };
+
+  const onDragUpdate = (result) => {
+    console.log("onDragUpdate", result);
+  };
   return (
-    <div className={styles.step_content} onMouseUp={handleSelect}>
+    <div className={styles.step_content}>
       <TestHeader />
       <MarkDialog
         mousePosition={mousePosition}
@@ -400,7 +426,7 @@ const ListeningTest: React.FC = () => {
         </Card>
         <Card className={`${styles.test_card} overflow_auto`}>
           {questionType[part].type_list.map((item: any, index: number) => (
-            <div key={index}>
+            <div key={index} onMouseUp={handleSelect}>
               <p className="font-1rem lh-2rem mb-20">{item.title}</p>
               {item.type === "fill_in_blanks" && (
                 <div className="lh-3rem mb-30">
@@ -505,36 +531,88 @@ const ListeningTest: React.FC = () => {
                     </div>
                   ))}
               </div>
-              {item.type === "matching" && (
-                // <div style={{ display: "flex" }}>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId="droppable">
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps}>
-                        {items.map((item, index) => (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                {item.content}
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-                // </div>
-              )}
+              <DragDropContext
+                onDragEnd={handleDragEnd}
+                onDragStart={onDragStart}
+                onDragUpdate={onDragUpdate}
+              >
+                {item.type === "matching" && (
+                  // <div style={{ display: "flex" }}>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Droppable droppableId="items" direction="vertical">
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {items.map((item, index) => (
+                            <Draggable
+                              key={item.id}
+                              draggableId={item.id}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={{
+                                    border: "1px solid #ccc",
+                                    padding: "10px",
+                                    margin: "5px",
+                                    cursor: "move",
+                                  }}
+                                >
+                                  {item.content}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+
+                    <Droppable droppableId="targets" direction="vertical">
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {targets.map((target, index) => (
+                            <Draggable
+                              key={target.id}
+                              draggableId={target.id}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={{
+                                    border: `2px dashed ${
+                                      target.matchedItemId ? "green" : "#ccc"
+                                    }`,
+                                    padding: "10px",
+                                    margin: "5px",
+                                  }}
+                                >
+                                  {target.content}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
+                  // </div>
+                )}
+              </DragDropContext>
             </div>
           ))}
         </Card>
