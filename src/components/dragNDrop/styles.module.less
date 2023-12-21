@@ -1,0 +1,41 @@
+:global {
+  @import "../../base.less";
+}
+
+.drag-drop-matching-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.draggable-option {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.targets-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.droppable-target {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.matched-option {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}

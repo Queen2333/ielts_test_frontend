@@ -11,6 +11,7 @@ import { Card, Input, Radio, Space, Button, Checkbox } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
+import DragNDrop from "../../../components/dragNDrop";
 
 const questionModule: any[] = [
   {
@@ -323,7 +324,7 @@ const ListeningTest: React.FC = () => {
 
   // 选中内容
   const handleSelect = (e: any) => {
-    console.log(e, "onMouseUp");
+    // console.log(e, "onMouseUp");
     try {
       setShowMark(false);
       const sel = rangy.getSelection();
@@ -531,88 +532,8 @@ const ListeningTest: React.FC = () => {
                     </div>
                   ))}
               </div>
-              <DragDropContext
-                onDragEnd={handleDragEnd}
-                onDragStart={onDragStart}
-                onDragUpdate={onDragUpdate}
-              >
-                {item.type === "matching" && (
-                  // <div style={{ display: "flex" }}>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Droppable droppableId="items" direction="vertical">
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                        >
-                          {items.map((item, index) => (
-                            <Draggable
-                              key={item.id}
-                              draggableId={item.id}
-                              index={index}
-                            >
-                              {(provided) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    border: "1px solid #ccc",
-                                    padding: "10px",
-                                    margin: "5px",
-                                    cursor: "move",
-                                  }}
-                                >
-                                  {item.content}
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
 
-                    <Droppable droppableId="targets" direction="vertical">
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                        >
-                          {targets.map((target, index) => (
-                            <Draggable
-                              key={target.id}
-                              draggableId={target.id}
-                              index={index}
-                            >
-                              {(provided) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    border: `2px dashed ${
-                                      target.matchedItemId ? "green" : "#ccc"
-                                    }`,
-                                    padding: "10px",
-                                    margin: "5px",
-                                  }}
-                                >
-                                  {target.content}
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                  // </div>
-                )}
-              </DragDropContext>
+              {item.type === "matching" && <DragNDrop />}
             </div>
           ))}
         </Card>
