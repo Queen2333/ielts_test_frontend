@@ -5,37 +5,39 @@
 .drag-drop-matching-container {
   display: flex;
   justify-content: space-around;
-  padding: 20px;
+  margin-top: 20px;
 }
 
 .options-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.draggable-option {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #eee;
-  cursor: pointer;
+  width: 150px;
 }
 
 .targets-container {
   display: flex;
-  flex-direction: column;
 }
 
 .droppable-target {
-  margin-bottom: 10px;
+  border: 2px dashed #ccc;
+  margin: 0 10px;
   padding: 10px;
-  background-color: #ddd;
   position: relative;
 }
 
+.draggable-option {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.drag-over {
+  background-color: #f0f8ff; /* 设置拖拽过程中的背景颜色 */
+}
+
+.drag-enter {
+  border-color: #36f; /* 设置拖拽进入时的边框颜色 */
+}
+
 .matched-option {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: bold;
+  margin-top: 10px;
 }

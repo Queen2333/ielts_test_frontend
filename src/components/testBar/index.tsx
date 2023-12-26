@@ -31,7 +31,7 @@ const TestBar: React.FC<PartProps> = ({
   }, [currentPart, currentQuestion]);
 
   useEffect(() => {
-    console.log(currentFocus, "currentFocus");
+    // console.log(currentFocus, "currentFocus");
     selectQuestion(currentFocus.partIndex, currentFocus.questionIndex);
   }, [currentFocus.partIndex, currentFocus.questionIndex]);
 
