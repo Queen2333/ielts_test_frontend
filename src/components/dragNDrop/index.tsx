@@ -12,13 +12,13 @@ interface Target {
   matchedOption: Option | null;
   isDraggingOver: boolean;
 }
-
+const optionList: Option[] = [
+  { id: "option-1", content: "Option 1" },
+  { id: "option-2", content: "Option 2" },
+  { id: "option-3", content: "Option 3" },
+];
 const DragDropComponent: React.FC = () => {
-  const [options, setOptions] = useState<Option[]>([
-    { id: "option-1", content: "Option 1" },
-    { id: "option-2", content: "Option 2" },
-    { id: "option-3", content: "Option 3" },
-  ]);
+  const [options, setOptions] = useState<Option[]>(optionList);
 
   const [targets, setTargets] = useState<Target[]>([
     {
@@ -51,22 +51,28 @@ const DragDropComponent: React.FC = () => {
 
   // option触发的结束事件
   const handleDragEnd = (e: React.DragEvent, target: any) => {
-    const targetElement = document.elementFromPoint(e.clientX, e.clientY);
-    const validTarget = targetElement?.classList.contains(
-      styles["droppable-target"]
-    );
-    const draggedItemId =
-      dragItem.current?.getAttribute("data-option-id") || "";
+    // const targetElement = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target.isDraggingOver) return;
+    const draggedItemId = target.matchedOption?.id;
 
-    if (!validTarget && dragItem.current) {
+    console.log(e, draggedItemId, "end");
+
+    if (dragItem.current) {
       // 将 option 放回原来的位置
-      setOptions([
-        ...options,
-        { id: draggedItemId, content: dragItem.current.innerText },
-      ]);
-    }
+      const draggedOption = optionList.find(
+        (option) => option.id === draggedItemId
+      );
+      if (draggedOption) {
+        const originalIndex = optionList.indexOf(draggedOption);
 
-    console.log(draggedItemId, "end");
+        // 在原始的位置插入被拖拽项
+        setOptions((prevOptions) => [
+          ...prevOptions.slice(0, originalIndex),
+          draggedOption,
+          ...prevOptions.slice(originalIndex),
+        ]);
+      }
+    }
 
     // 更新 targets，确保 matchedOption 设置为 null，isDraggingOver 设置为 false
     const updatedTargets = targets.map((target) => ({
@@ -87,7 +93,7 @@ const DragDropComponent: React.FC = () => {
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     const draggedItemId = e.dataTransfer.getData("text/plain");
-    console.log(e, draggedItemId, "drop");
+    // console.log(e, draggedItemId, "drop");
 
     // 一个框只能有一个选项
     const targetItem = targets.find((target) => target.id === targetId);
@@ -205,6 +211,7 @@ const DragDropComponent: React.FC = () => {
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             data-target-id={target.id}
+            data-droppable-target={true}
           >
             {target.content}
             <div className={styles["matched-option"]}>
