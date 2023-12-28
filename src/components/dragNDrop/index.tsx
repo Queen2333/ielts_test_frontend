@@ -52,10 +52,10 @@ const DragDropComponent: React.FC = () => {
   // option触发的结束事件
   const handleDragEnd = (e: React.DragEvent, target: any) => {
     // const targetElement = document.elementFromPoint(e.clientX, e.clientY);
+    console.log(e, target, "end");
+
     if (!target.isDraggingOver) return;
     const draggedItemId = target.matchedOption?.id;
-
-    console.log(e, draggedItemId, "end");
 
     if (dragItem.current) {
       // 将 option 放回原来的位置
@@ -93,7 +93,7 @@ const DragDropComponent: React.FC = () => {
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     const draggedItemId = e.dataTransfer.getData("text/plain");
-    // console.log(e, draggedItemId, "drop");
+    console.log(e, "drop");
 
     // 一个框只能有一个选项
     const targetItem = targets.find((target) => target.id === targetId);
@@ -132,6 +132,7 @@ const DragDropComponent: React.FC = () => {
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
       targetElement?.getAttribute("data-target-id") === targetId;
+
     const updatedTargets = targets.map((target) => ({
       ...target,
       isDraggingOver: target.id === targetId && isDraggingOver,
@@ -140,38 +141,35 @@ const DragDropComponent: React.FC = () => {
   };
 
   const handleDragEnter: React.DragEventHandler<HTMLDivElement> = (e) => {
-    console.log("enter");
     e.preventDefault();
     const targetId = e.currentTarget.getAttribute("data-target-id");
     if (targetId) {
+      console.log(e, targetId, "enter");
       // handleDragEnterAction(targetId); // 处理拖拽进入时的逻辑
-
       // 例如，添加拖拽进入时的样式
-      e.currentTarget.classList.add(styles["drag-enter"]); // 请替换为你的实际样式类名
+      // e.currentTarget.classList.add(styles["drag-enter"]); // 请替换为你的实际样式类名
     }
   };
 
   const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (e) => {
-    console.log("leave");
+    e.preventDefault();
+    const targetId = e.currentTarget.getAttribute("data-target-id");
+    if (targetId) {
+      console.log(targetId, "leave");
+      targets.map((item) => {
+        if (item.id === targetId) {
+          item.isDraggingOver = true;
+        }
+      });
+      setTargets(targets);
+    }
+
     // 重置样式或移除视觉效果
-    e.currentTarget.classList.remove(styles["drag-enter"]); // 请替换为你的实际样式类名
+    // e.currentTarget.classList.remove(styles["drag-enter"]); // 请替换为你的实际样式类名
   };
 
   return (
     <div className={styles["drag-drop-matching-container"]}>
-      <div className={styles["options-container"]}>
-        {options.map((option) => (
-          <div
-            key={option.id}
-            id={option.id}
-            className={styles["draggable-option"]}
-            draggable
-            onDragStart={(e) => handleDragStart(e, option.id)}
-          >
-            {option.content}
-          </div>
-        ))}
-      </div>
       <div
         className={styles["targets-container"]}
         onDrop={(e) => {
@@ -193,28 +191,27 @@ const DragDropComponent: React.FC = () => {
         }}
       >
         {targets.map((target) => (
-          <div
-            key={target.id}
-            className={`${styles["droppable-target"]} ${
-              target.isDraggingOver ? styles["drag-over"] : ""
-            }`}
-            onDragOver={(e) => {
-              const targetElement = document.elementFromPoint(
-                e.clientX,
-                e.clientY
-              );
-              const targetId = targetElement?.getAttribute("data-target-id");
-              if (targetId) {
-                handleDragOver(e, targetId);
-              }
-            }}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-            data-target-id={target.id}
-            data-droppable-target={true}
-          >
+          <div key={target.id} className={styles["droppable-target"]}>
             {target.content}
-            <div className={styles["matched-option"]}>
+            <div
+              className={`${styles["matched-option"]} ${
+                target.isDraggingOver ? styles["drag-over"] : ""
+              }`}
+              onDragOver={(e) => {
+                const targetElement = document.elementFromPoint(
+                  e.clientX,
+                  e.clientY
+                );
+                const targetId = targetElement?.getAttribute("data-target-id");
+                if (targetId) {
+                  handleDragOver(e, targetId);
+                }
+              }}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              data-target-id={target.id}
+              data-droppable-target={true}
+            >
               {target.matchedOption && (
                 <div
                   className={styles["draggable-option"]}
@@ -229,7 +226,21 @@ const DragDropComponent: React.FC = () => {
                   {target.matchedOption.content}
                 </div>
               )}
+              {!target.matchedOption && 1}
             </div>
+          </div>
+        ))}
+      </div>
+      <div className={styles["options-container"]}>
+        {options.map((option) => (
+          <div
+            key={option.id}
+            id={option.id}
+            className={styles["draggable-option"]}
+            draggable
+            onDragStart={(e) => handleDragStart(e, option.id)}
+          >
+            {option.content}
           </div>
         ))}
       </div>

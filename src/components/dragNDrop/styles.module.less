@@ -4,40 +4,67 @@
 
 .drag-drop-matching-container {
   display: flex;
-  justify-content: space-around;
   margin-top: 20px;
 }
 
 .options-container {
-  width: 150px;
+  // width: 150px;
 }
 
 .targets-container {
-  display: flex;
+  // display: flex;
+  min-width: 500px;
 }
 
 .droppable-target {
-  border: 2px dashed #ccc;
+  // border: 2px dashed #ccc;
   margin: 0 10px;
-  padding: 10px;
-  position: relative;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .draggable-option {
-  background-color: #eee;
-  border: 1px solid #ddd;
-  padding: 5px;
-  margin-bottom: 5px;
+  min-width: 50px;
+  line-height: 20px;
+  height: 30px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background: #dee5f5;
+  -webkit-box-shadow: 0 1px 3px 0 #b9bdc5;
+  box-shadow: 0 1px 3px 0 #b9bdc5;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
 }
 
+.matched-option {
+  width: 200px;
+  background: #fff;
+  font-size: 16px;
+  text-align: center;
+  line-height: 30px;
+  // padding-bottom: 5px;
+  // padding-top: 5px;
+  border: 1px solid #0370a7;
+  border-radius: 0.143em;
+  color: #000;
+  font-weight: 700;
+  height: 32px;
+  box-sizing: border-box;
+  margin-left: 5px;
+  overflow: hidden;
+}
 .drag-over {
-  background-color: #f0f8ff; /* 设置拖拽过程中的背景颜色 */
+  // line-height: 20px;
+  background: #fffee8;
+  border: 1px solid #1d1c27;
 }
 
 .drag-enter {
   border-color: #36f; /* 设置拖拽进入时的边框颜色 */
-}
-
-.matched-option {
-  margin-top: 10px;
 }

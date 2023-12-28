@@ -88,7 +88,7 @@ module.exports = {
     },
     hot: true,
     compress: true,
-    port: 8087,
+    port: 8086,
     client: {
       logging: "verbose", // 设置为 'info' 或 'verbose'，以启用模块名称输出
     },
