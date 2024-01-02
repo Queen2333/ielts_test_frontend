@@ -127,36 +127,40 @@ const questionModule: any[] = [
         title:
           "What can you find at each of the places below?Choose the correct answer and move it into the gap.",
         options: [
-          { label: "A", text: "flower", id: 1223 },
-          { label: "B", text: "grass", id: 1244 },
-          { label: "C", text: "glass", id: 1255 },
-          { label: "D", text: "tree", id: 1266 },
-          { label: "E", text: "leave", id: 1277 },
+          { label: "A", content: "flower", id: 1223 },
+          { label: "B", content: "grass", id: 1244 },
+          { label: "C", content: "glass", id: 1255 },
+          { label: "D", content: "tree", id: 1266 },
+          { label: "E", content: "leave", id: 1277 },
         ],
         question_list: [
           {
             id: 88,
             no: "11",
-            answer: "",
-            question: "Anna",
+            content: "Anna",
+            matchedOption: null,
+            isDraggingOver: false,
           },
           {
             id: 99,
             no: "12",
-            answer: "",
-            question: "Benny",
+            content: "Benny",
+            matchedOption: null,
+            isDraggingOver: false,
           },
           {
             id: 100,
             no: "13",
-            answer: "",
-            question: "John",
+            content: "John",
+            matchedOption: null,
+            isDraggingOver: false,
           },
           {
             id: 111,
             no: "14",
-            answer: "",
-            question: "James",
+            content: "James",
+            matchedOption: null,
+            isDraggingOver: false,
           },
         ],
       },
@@ -533,7 +537,12 @@ const ListeningTest: React.FC = () => {
                   ))}
               </div>
 
-              {item.type === "matching" && <DragNDrop />}
+              {item.type === "matching" && (
+                <DragNDrop
+                  optionList={item.options}
+                  targetList={item.question_list}
+                />
+              )}
             </div>
           ))}
         </Card>

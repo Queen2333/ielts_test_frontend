@@ -3,6 +3,7 @@ import styles from "./styles.module.less";
 
 interface Option {
   id: string;
+  label: string;
   content: string;
 }
 
@@ -11,35 +12,18 @@ interface Target {
   content: string;
   matchedOption: Option | null;
   isDraggingOver: boolean;
+  no: string;
 }
-const optionList: Option[] = [
-  { id: "option-1", content: "Option 1" },
-  { id: "option-2", content: "Option 2" },
-  { id: "option-3", content: "Option 3" },
-];
-const DragDropComponent: React.FC = () => {
+
+interface dragProps {
+  targetList: Target[];
+  optionList: Option[];
+}
+
+const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
   const [options, setOptions] = useState<Option[]>(optionList);
 
-  const [targets, setTargets] = useState<Target[]>([
-    {
-      id: "target-1",
-      content: "Target 1",
-      matchedOption: null,
-      isDraggingOver: false,
-    },
-    {
-      id: "target-2",
-      content: "Target 2",
-      matchedOption: null,
-      isDraggingOver: false,
-    },
-    {
-      id: "target-3",
-      content: "Target 3",
-      matchedOption: null,
-      isDraggingOver: false,
-    },
-  ]);
+  const [targets, setTargets] = useState<Target[]>(targetList);
 
   const dragItem = useRef<HTMLDivElement | null>(null);
 
@@ -60,7 +44,7 @@ const DragDropComponent: React.FC = () => {
     if (dragItem.current) {
       // 将 option 放回原来的位置
       const draggedOption = optionList.find(
-        (option) => option.id === draggedItemId
+        (option) => option.id == draggedItemId
       );
       if (draggedOption) {
         const originalIndex = optionList.indexOf(draggedOption);
@@ -78,9 +62,7 @@ const DragDropComponent: React.FC = () => {
     const updatedTargets = targets.map((target) => ({
       ...target,
       matchedOption:
-        target.matchedOption?.id === draggedItemId
-          ? null
-          : target.matchedOption,
+        target.matchedOption?.id == draggedItemId ? null : target.matchedOption,
       isDraggingOver: false,
     }));
 
@@ -96,10 +78,10 @@ const DragDropComponent: React.FC = () => {
     console.log(e, "drop");
 
     // 一个框只能有一个选项
-    const targetItem = targets.find((target) => target.id === targetId);
+    const targetItem = targets.find((target) => target.id == targetId);
     if (targetItem?.matchedOption) return;
 
-    const draggedOption = options.find((option) => option.id === draggedItemId);
+    const draggedOption = options.find((option) => option.id == draggedItemId);
     if (draggedOption) {
       //  更新在外面的选项
       const updatedOptions = options.filter(
@@ -109,13 +91,13 @@ const DragDropComponent: React.FC = () => {
 
       // 更新target的状态
       const updatedTargets = targets.map((target) => {
-        if (target.id === targetId) {
+        if (target.id == targetId) {
           return {
             ...target,
             matchedOption: draggedOption,
             isDraggingOver: false,
           };
-        } else if (target.matchedOption?.id === draggedItemId) {
+        } else if (target.matchedOption?.id == draggedItemId) {
           return { ...target, matchedOption: null, isDraggingOver: false };
         }
         return target;
@@ -131,11 +113,11 @@ const DragDropComponent: React.FC = () => {
     e.preventDefault();
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
-      targetElement?.getAttribute("data-target-id") === targetId;
+      targetElement?.getAttribute("data-target-id") == targetId;
 
     const updatedTargets = targets.map((target) => ({
       ...target,
-      isDraggingOver: target.id === targetId && isDraggingOver,
+      isDraggingOver: target.id == targetId && isDraggingOver,
     }));
     setTargets(updatedTargets);
   };
@@ -157,7 +139,7 @@ const DragDropComponent: React.FC = () => {
     if (targetId) {
       console.log(targetId, "leave");
       targets.map((item) => {
-        if (item.id === targetId) {
+        if (item.id == targetId) {
           item.isDraggingOver = true;
         }
       });
@@ -223,10 +205,10 @@ const DragDropComponent: React.FC = () => {
                   }
                   onDragEnd={(e) => handleDragEnd(e, target)}
                 >
-                  {target.matchedOption.content}
+                  {target.matchedOption.label}.{target.matchedOption.content}
                 </div>
               )}
-              {!target.matchedOption && 1}
+              {!target.matchedOption && target.no}
             </div>
           </div>
         ))}
@@ -240,7 +222,7 @@ const DragDropComponent: React.FC = () => {
             draggable
             onDragStart={(e) => handleDragStart(e, option.id)}
           >
-            {option.content}
+            {option.label}.{option.content}
           </div>
         ))}
       </div>
