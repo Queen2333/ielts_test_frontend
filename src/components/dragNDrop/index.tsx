@@ -18,9 +18,14 @@ interface Target {
 interface dragProps {
   targetList: Target[];
   optionList: Option[];
+  dropEnd: (targets: Target[]) => void;
 }
 
-const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
+const DragDropComponent: React.FC<dragProps> = ({
+  targetList,
+  optionList,
+  dropEnd,
+}) => {
   const [options, setOptions] = useState<Option[]>(optionList);
 
   const [targets, setTargets] = useState<Target[]>(targetList);
@@ -44,7 +49,7 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
     if (dragItem.current) {
       // 将 option 放回原来的位置
       const draggedOption = optionList.find(
-        (option) => option.id == draggedItemId
+        (option) => option.id === draggedItemId
       );
       if (draggedOption) {
         const originalIndex = optionList.indexOf(draggedOption);
@@ -62,12 +67,14 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
     const updatedTargets = targets.map((target) => ({
       ...target,
       matchedOption:
-        target.matchedOption?.id == draggedItemId ? null : target.matchedOption,
+        target.matchedOption?.id === draggedItemId
+          ? null
+          : target.matchedOption,
       isDraggingOver: false,
     }));
 
     setTargets(updatedTargets);
-
+    dropEnd(updatedTargets);
     dragItem.current = null;
   };
 
@@ -78,10 +85,10 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
     console.log(e, "drop");
 
     // 一个框只能有一个选项
-    const targetItem = targets.find((target) => target.id == targetId);
+    const targetItem = targets.find((target) => target.id === targetId);
     if (targetItem?.matchedOption) return;
 
-    const draggedOption = options.find((option) => option.id == draggedItemId);
+    const draggedOption = options.find((option) => option.id === draggedItemId);
     if (draggedOption) {
       //  更新在外面的选项
       const updatedOptions = options.filter(
@@ -91,21 +98,21 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
 
       // 更新target的状态
       const updatedTargets = targets.map((target) => {
-        if (target.id == targetId) {
+        if (target.id === targetId) {
           return {
             ...target,
             matchedOption: draggedOption,
             isDraggingOver: false,
           };
-        } else if (target.matchedOption?.id == draggedItemId) {
+        } else if (target.matchedOption?.id === draggedItemId) {
           return { ...target, matchedOption: null, isDraggingOver: false };
         }
         return target;
       });
 
       setTargets(updatedTargets);
+      dropEnd(updatedTargets);
     }
-
     dragItem.current = null;
   };
 
@@ -113,11 +120,11 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
     e.preventDefault();
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
-      targetElement?.getAttribute("data-target-id") == targetId;
+      targetElement?.getAttribute("data-target-id") === targetId;
 
     const updatedTargets = targets.map((target) => ({
       ...target,
-      isDraggingOver: target.id == targetId && isDraggingOver,
+      isDraggingOver: target.id === targetId && isDraggingOver,
     }));
     setTargets(updatedTargets);
   };
@@ -139,7 +146,7 @@ const DragDropComponent: React.FC<dragProps> = ({ targetList, optionList }) => {
     if (targetId) {
       console.log(targetId, "leave");
       targets.map((item) => {
-        if (item.id == targetId) {
+        if (item.id === targetId) {
           item.isDraggingOver = true;
         }
       });

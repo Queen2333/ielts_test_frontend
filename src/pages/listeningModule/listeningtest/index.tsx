@@ -8,7 +8,6 @@ import TestHeader from "../../../components/testHeader";
 import TestBar from "../../../components/testBar";
 import { useLocation } from "react-router-dom";
 import { Card, Input, Radio, Space, Button, Checkbox } from "antd";
-import type { RadioChangeEvent } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
 import DragNDrop from "../../../components/dragNDrop";
@@ -127,36 +126,36 @@ const questionModule: any[] = [
         title:
           "What can you find at each of the places below?Choose the correct answer and move it into the gap.",
         options: [
-          { label: "A", content: "flower", id: 1223 },
-          { label: "B", content: "grass", id: 1244 },
-          { label: "C", content: "glass", id: 1255 },
-          { label: "D", content: "tree", id: 1266 },
-          { label: "E", content: "leave", id: 1277 },
+          { label: "A", content: "flower", id: "1223" },
+          { label: "B", content: "grass", id: "1244" },
+          { label: "C", content: "glass", id: "1255" },
+          { label: "D", content: "tree", id: "1266" },
+          { label: "E", content: "leave", id: "1277" },
         ],
         question_list: [
           {
-            id: 88,
+            id: "88",
             no: "11",
             content: "Anna",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: 99,
+            id: "99",
             no: "12",
             content: "Benny",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: 100,
+            id: "100",
             no: "13",
             content: "John",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: 111,
+            id: "111",
             no: "14",
             content: "James",
             matchedOption: null,
@@ -166,28 +165,37 @@ const questionModule: any[] = [
       },
       {
         type: "map",
-        title: "",
+        title:
+          "Label the map below.Write the correct letter, A-E, next to questions 16-20.",
+        picture: "https://ieltscat-oss.xdf.cn/1004/1592987703205371.png",
         question_list: [
           {
-            id: 120,
-            no: "15-18",
-            answer: [],
+            id: "120",
+            no: "15",
             answer_count: 4,
-            descriptions: [
-              { label: "15", text: "" },
-              { label: "16", text: "" },
-              { label: "17", text: "" },
-              { label: "18", text: "" },
-            ],
-            options: [
-              { label: "A", text: "" },
-              { label: "B", text: "" },
-              { label: "C", text: "" },
-              { label: "D", text: "" },
-              { label: "E", text: "" },
-              { label: "F", text: "" },
-              { label: "G", text: "" },
-            ],
+            content: "",
+            answer: "",
+          },
+          {
+            id: "121",
+            no: "16",
+            answer_count: 4,
+            content: "",
+            answer: "",
+          },
+          {
+            id: "122",
+            no: "17",
+            answer_count: 4,
+            content: "",
+            answer: "",
+          },
+          {
+            id: "123",
+            no: "18",
+            answer_count: 4,
+            content: "",
+            answer: "",
           },
         ],
       },
@@ -366,49 +374,9 @@ const ListeningTest: React.FC = () => {
     });
   };
 
-  const [items, setItems] = useState([
-    { id: "item-1", content: "Option 1" },
-    { id: "item-2", content: "Option 2" },
-    { id: "item-3", content: "Option 3" },
-  ]);
-
-  const [targets, setTargets] = useState([
-    { id: "target-1", content: "Target 1", matchedItemId: null },
-    { id: "target-2", content: "Target 2", matchedItemId: null },
-    { id: "target-3", content: "Target 3", matchedItemId: null },
-  ]);
-
-  const handleDragEnd = (result) => {
-    console.log("result.draggableId:", result.draggableId);
-    console.log("result.destination:", result.destination);
-    if (!result.destination) {
-      return;
-    }
-
-    const sourceItem = items.find((item) => item.id === result.draggableId);
-    const target = targets.find(
-      (target) => target.id === result.destination.droppableId
-    );
-
-    // 更新匹配关系
-    if (target) {
-      const updatedTargets = [...targets];
-      const matchedItem = items.find((item) => item.id === result.draggableId);
-
-      if (matchedItem) {
-        const targetIndex = updatedTargets.findIndex((t) => t.id === target.id);
-        updatedTargets[targetIndex].matchedItemId = matchedItem.id;
-        setTargets(updatedTargets);
-      }
-    }
-  };
-
-  const onDragStart = (result) => {
-    console.log("onDragStart", result);
-  };
-
-  const onDragUpdate = (result) => {
-    console.log("onDragUpdate", result);
+  // 匹配题拖拽结束
+  const dropEnd = (targets: any[]) => {
+    console.log(targets, "targets");
   };
   return (
     <div className={styles.step_content}>
@@ -541,7 +509,43 @@ const ListeningTest: React.FC = () => {
                 <DragNDrop
                   optionList={item.options}
                   targetList={item.question_list}
+                  dropEnd={dropEnd}
                 />
+              )}
+              {item.type === "map" && (
+                <div>
+                  <img src={item.picture} alt="" />
+                  <div className="lh-3rem mb-30">
+                    {item.question_list.map((i: any, idx: number) => (
+                      <div key={idx} className="flex-alc">
+                        <div className="mr-5">
+                          {i.no}. {i.content}
+                        </div>
+                        <Input
+                          ref={
+                            inputRefs[part][
+                              Number(item.question_list[idx].no) - 1
+                            ]
+                          }
+                          type="text"
+                          className={styles.input_style}
+                          value={item.question_list[idx].answer}
+                          placeholder={item.question_list[idx].no}
+                          // onChange={(e) =>
+                          //   changeChoice(e, index, idx, item.type)
+                          // }
+                          // onFocus={() =>
+                          //   focusQues(
+                          //     item.type,
+                          //     index,
+                          //     item.question_list[idx].no
+                          //   )
+                          // }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           ))}
