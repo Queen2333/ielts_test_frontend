@@ -172,29 +172,43 @@ const questionModule: any[] = [
           {
             id: "120",
             no: "15",
-            answer_count: 4,
-            content: "",
+            answer_count: 6,
+            content: "residents",
             answer: "",
           },
           {
             id: "121",
             no: "16",
-            answer_count: 4,
-            content: "",
+            answer_count: 6,
+            content: "railway",
             answer: "",
           },
           {
             id: "122",
             no: "17",
-            answer_count: 4,
-            content: "",
+            answer_count: 6,
+            content: "playground",
             answer: "",
           },
           {
             id: "123",
             no: "18",
-            answer_count: 4,
-            content: "",
+            answer_count: 6,
+            content: "mountains",
+            answer: "",
+          },
+          {
+            id: "124",
+            no: "19",
+            answer_count: 6,
+            content: "garden",
+            answer: "",
+          },
+          {
+            id: "125",
+            no: "20",
+            answer_count: 6,
+            content: "hotel",
             answer: "",
           },
         ],
@@ -268,9 +282,7 @@ const ListeningTest: React.FC = () => {
     // 找出是哪个type
     const targetPart = questionType[part];
     let typeIndex = 0;
-    let question_count = ["multi_choice", "map"].includes(
-      targetPart.type_list[0].type
-    )
+    let question_count = ["multi_choice"].includes(targetPart.type_list[0].type)
       ? targetPart.type_list[0].question_list[0].answer_count
       : targetPart.type_list[0].question_list.length;
     if (targetPart && targetPart.type_list) {
@@ -280,9 +292,7 @@ const ListeningTest: React.FC = () => {
       ) {
         typeIndex++;
         if (
-          ["multi_choice", "map"].includes(
-            targetPart.type_list?.[typeIndex]?.type
-          )
+          ["multi_choice"].includes(targetPart.type_list?.[typeIndex]?.type)
         ) {
           const totalAnswerCount = targetPart.type_list?.[
             typeIndex
@@ -308,7 +318,9 @@ const ListeningTest: React.FC = () => {
     });
 
     setTimeout(() => {
-      if (targetPart.type_list[typeIndex].type === "fill_in_blanks") {
+      if (
+        ["fill_in_blanks", "map"].includes(targetPart.type_list[typeIndex].type)
+      ) {
         inputRefs[part][question] && inputRefs[part][question].current.focus();
       }
     }, 0);
@@ -327,6 +339,10 @@ const ListeningTest: React.FC = () => {
         questionType[part].type_list[index].question_list[idx].answer = e;
         break;
       case "fill_in_blanks":
+        questionType[part].type_list[index].question_list[idx].answer =
+          e.target.value;
+        break;
+      case "map":
         questionType[part].type_list[index].question_list[idx].answer =
           e.target.value;
         break;
@@ -366,12 +382,21 @@ const ListeningTest: React.FC = () => {
     questionIndex: string
   ) => {
     console.log(type, typeIndex, questionIndex, "focus");
+    const _questionIndex: number = formatNo(questionIndex);
     setCurrentFocus({
       type,
       partIndex: part,
       typeIndex,
-      questionIndex: Number(questionIndex) - 1,
+      questionIndex: _questionIndex,
     });
+  };
+
+  const formatNo = (no: string) => {
+    return Number(no) % 10 > 0
+      ? (Number(no) % 10) - 1
+      : Number(no) >= 10
+      ? 9
+      : Number(no) - 1;
   };
 
   // 匹配题拖拽结束
@@ -412,7 +437,7 @@ const ListeningTest: React.FC = () => {
                           <Input
                             ref={
                               inputRefs[part][
-                                Number(item.question_list[idx].no) - 1
+                                formatNo(item.question_list[idx].no)
                               ]
                             }
                             type="text"
@@ -443,7 +468,7 @@ const ListeningTest: React.FC = () => {
                         className={`mb-20 lh-2rem font-1rem fwb pointer ${
                           currentFocus.type === "choice" &&
                           currentFocus.typeIndex === index &&
-                          currentFocus.questionIndex === Number(i.no) - 1
+                          currentFocus.questionIndex === formatNo(i.no)
                             ? styles.selected_background
                             : ""
                         }`}
@@ -472,9 +497,9 @@ const ListeningTest: React.FC = () => {
                           currentFocus.type === "multi_choice" &&
                           currentFocus.typeIndex === index &&
                           currentFocus.questionIndex >=
-                            Number(i.no.split("-")[0]) - 1 &&
+                            formatNo(i.no.split("-")[0]) &&
                           currentFocus.questionIndex <=
-                            Number(i.no.split("-")[1]) - 1
+                            formatNo(i.no.split("-")[1])
                             ? styles.selected_background
                             : ""
                         }`}
@@ -506,15 +531,17 @@ const ListeningTest: React.FC = () => {
               </div>
 
               {item.type === "matching" && (
-                <DragNDrop
-                  optionList={item.options}
-                  targetList={item.question_list}
-                  dropEnd={dropEnd}
-                />
+                <div className="mb-30">
+                  <DragNDrop
+                    optionList={item.options}
+                    targetList={item.question_list}
+                    dropEnd={dropEnd}
+                  />
+                </div>
               )}
               {item.type === "map" && (
                 <div>
-                  <img src={item.picture} alt="" />
+                  <img src={item.picture} alt="" className="mb-20" />
                   <div className="lh-3rem mb-30">
                     {item.question_list.map((i: any, idx: number) => (
                       <div key={idx} className="flex-alc">
@@ -524,23 +551,17 @@ const ListeningTest: React.FC = () => {
                         <Input
                           ref={
                             inputRefs[part][
-                              Number(item.question_list[idx].no) - 1
+                              formatNo(item.question_list[idx].no)
                             ]
                           }
                           type="text"
                           className={styles.input_style}
                           value={item.question_list[idx].answer}
                           placeholder={item.question_list[idx].no}
-                          // onChange={(e) =>
-                          //   changeChoice(e, index, idx, item.type)
-                          // }
-                          // onFocus={() =>
-                          //   focusQues(
-                          //     item.type,
-                          //     index,
-                          //     item.question_list[idx].no
-                          //   )
-                          // }
+                          onChange={(e) =>
+                            changeChoice(e, index, idx, item.type)
+                          }
+                          onFocus={() => focusQues(item.type, index, i.no)}
                         />
                       </div>
                     ))}
