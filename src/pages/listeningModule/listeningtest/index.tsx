@@ -23,7 +23,8 @@ const questionModule: any[] = [
         article_content: `The total rent: Peter £ 110 & Jim £ &#8203;【blank】&#8203;<br/>
           Car parking: in the &#8203;【blank】&#8203;<br/>
           A place to buy things: &#8203;【blank】&#8203;, because Jim works there.<br/>
-          The fees they should share: &#8203;【blank】&#8203; fees<br/>`,
+          The fees they should share: &#8203;【blank】&#8203; fees<br/>
+          `,
         question_list: [
           {
             id: 1,
@@ -269,12 +270,128 @@ const questionModule: any[] = [
           },
         ],
       },
+      {
+        type: "multi_choice",
+        title: "Choose TWO letters, A-E.",
+        question_list: [
+          {
+            id: "129",
+            no: "25-27",
+            answer_count: 3,
+            question:
+              "Which THREE things do Phil and Stella still have to decide on?",
+            answer: [],
+            options: [
+              { label: "A", text: "how to analyse their results" },
+              { label: "B", text: "their methods of presentation" },
+              { label: "C", text: "the design of their questionnaire" },
+              { label: "D", text: "the location of their survey" },
+              { label: "E", text: "weather variables to be measured" },
+            ],
+          },
+          {
+            id: "130",
+            no: "28-30",
+            answer_count: 3,
+            question:
+              "Which THREE things do Phil and Stella still have to decide on?",
+            answer: [],
+            options: [
+              { label: "A", text: "how to analyse their results" },
+              { label: "B", text: "their methods of presentation" },
+              { label: "C", text: "the design of their questionnaire" },
+              { label: "D", text: "the location of their survey" },
+              { label: "E", text: "weather variables to be measured" },
+            ],
+          },
+        ],
+      },
     ],
   },
   {
     part: "Part 4",
     partNumber: "31-40",
-    type_list: [],
+    type_list: [
+      {
+        type: "fill_in_blanks",
+        title: "Complete the notes below. Write ONE WORD ONLY for each answer.",
+        article_content: `The total rent: Peter £ 110 & Jim £ &#8203;【blank】&#8203;<br/>
+          Car parking: in the &#8203;【blank】&#8203;<br/>
+          A place to buy things: &#8203;【blank】&#8203;, because Jim works there.<br/>
+          The fees they should share: &#8203;【blank】&#8203; fees<br/>
+          Recent interview:<br/>
+          A company is not one entity comprised of components, but a living organism composed of cells.<br/>
+          Manjeet's motto is&#8203;【blank】&#8203;<br/>
+          The rate of staff turnover has been reduced.<br/>
+          A &#8203;【blank】&#8203;can be from any other company.<br/>
+          Grades are not used for&#8203;【blank】&#8203;<br/>
+          The complaint form known as a &#8203;【blank】&#8203;has access to all employees online.<br/>
+          The manager can receive any complaints concerning air conditioning, food quality and &#8203;【blank】&#8203;entitlement.<br/>
+          A &#8203;【blank】&#8203;on the anonymous complaint was introduced in the new system.<br/>`,
+        question_list: [
+          {
+            id: "131",
+            no: "31",
+            position: 10,
+            answer: "",
+          },
+          {
+            id: "132",
+            no: "32",
+            position: 25,
+            answer: "",
+          },
+          {
+            id: "133",
+            no: "33",
+            position: 40,
+            answer: "",
+          },
+          {
+            id: "134",
+            no: "34",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "135",
+            no: "35",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "136",
+            no: "36",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "137",
+            no: "37",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "138",
+            no: "38",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "139",
+            no: "39",
+            position: 50,
+            answer: "",
+          },
+          {
+            id: "140",
+            no: "40",
+            position: 50,
+            answer: "",
+          },
+        ],
+      },
+    ],
   },
 ];
 const ListeningTest: React.FC = () => {
