@@ -218,7 +218,58 @@ const questionModule: any[] = [
   {
     part: "Part 3",
     partNumber: "21-30",
-    type_list: [],
+    type_list: [
+      {
+        type: "choice",
+        title: "Choose One letters, A-D.",
+        question_list: [
+          {
+            id: "125",
+            no: "21",
+            question: "The company deals mostly with:",
+            answer: "",
+            options: [
+              { label: "A", text: "Big city." },
+              { label: "B", text: "Nature holidays." },
+              { label: "C", text: "Nepal." },
+            ],
+          },
+          {
+            id: "126",
+            no: "22",
+            question: "The company deals mostly with:",
+            answer: "",
+            options: [
+              { label: "A", text: "Big city." },
+              { label: "B", text: "Nature holidays." },
+              { label: "C", text: "Nepal." },
+            ],
+          },
+          {
+            id: "127",
+            no: "23",
+            question: "The company deals mostly with:",
+            answer: "",
+            options: [
+              { label: "A", text: "Big city." },
+              { label: "B", text: "Nature holidays." },
+              { label: "C", text: "Nepal." },
+            ],
+          },
+          {
+            id: "128",
+            no: "24",
+            question: "The company deals mostly with:",
+            answer: "",
+            options: [
+              { label: "A", text: "Big city." },
+              { label: "B", text: "Nature holidays." },
+              { label: "C", text: "Nepal." },
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     part: "Part 4",
@@ -276,11 +327,7 @@ const ListeningTest: React.FC = () => {
     // };
   }, []);
 
-  // 切换底部bar题号
-  const chooseQuestion = (part: number, question: number) => {
-    setPart(part);
-    // 找出是哪个type
-    const targetPart = questionType[part];
+  const findTypeIndex = (targetPart: any, question: number) => {
     let typeIndex = 0;
     let question_count = ["multi_choice"].includes(targetPart.type_list[0].type)
       ? targetPart.type_list[0].question_list[0].answer_count
@@ -307,8 +354,18 @@ const ListeningTest: React.FC = () => {
         }
       }
     }
+    return typeIndex;
+  };
+
+  // 切换底部bar题号
+  const chooseQuestion = (part: number, question: number) => {
+    setPart(part);
+    // 找出是哪个type
+    const targetPart = questionType[part];
+    const typeIndex = findTypeIndex(targetPart, question);
     console.log(part, typeIndex, question);
 
+    // const _questionNo =
     // 聚焦题目
     setCurrentFocus({
       type: targetPart.type_list[typeIndex].type,
@@ -403,6 +460,21 @@ const ListeningTest: React.FC = () => {
   const dropEnd = (targets: any[]) => {
     console.log(targets, "targets");
   };
+
+  // 匹配题focus
+  const clickTarget = (no: string) => {
+    const targetPart = questionType[part];
+    const _questionIndex: number = formatNo(no);
+    const typeIndex = findTypeIndex(targetPart, _questionIndex);
+
+    setCurrentFocus({
+      type: "matching",
+      partIndex: part,
+      typeIndex,
+      questionIndex: _questionIndex,
+    });
+  };
+
   return (
     <div className={styles.step_content}>
       <TestHeader />
@@ -535,7 +607,9 @@ const ListeningTest: React.FC = () => {
                   <DragNDrop
                     optionList={item.options}
                     targetList={item.question_list}
+                    currentFocus={currentFocus}
                     dropEnd={dropEnd}
+                    clickTarget={clickTarget}
                   />
                 </div>
               )}

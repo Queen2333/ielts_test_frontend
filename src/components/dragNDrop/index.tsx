@@ -18,13 +18,22 @@ interface Target {
 interface dragProps {
   targetList: Target[];
   optionList: Option[];
+  currentFocus: {
+    type: string;
+    partIndex: number;
+    typeIndex: number;
+    questionIndex: number;
+  };
   dropEnd: (targets: Target[]) => void;
+  clickTarget: (no: string) => void;
 }
 
 const DragDropComponent: React.FC<dragProps> = ({
   targetList,
   optionList,
+  currentFocus,
   dropEnd,
+  clickTarget,
 }) => {
   const [options, setOptions] = useState<Option[]>(optionList);
 
@@ -157,6 +166,9 @@ const DragDropComponent: React.FC<dragProps> = ({
     // e.currentTarget.classList.remove(styles["drag-enter"]); // 请替换为你的实际样式类名
   };
 
+  const handleClick = (no: string) => {
+    clickTarget(no);
+  };
   return (
     <div className={styles["drag-drop-matching-container"]}>
       <div
@@ -183,8 +195,13 @@ const DragDropComponent: React.FC<dragProps> = ({
           <div key={target.id} className={styles["droppable-target"]}>
             {target.content}
             <div
-              className={`${styles["matched-option"]} ${
+              className={`pointer ${styles["matched-option"]} ${
                 target.isDraggingOver ? styles["drag-over"] : ""
+              } ${
+                currentFocus.partIndex * 10 + currentFocus.questionIndex ===
+                Number(target.no) - 1
+                  ? styles["focused"]
+                  : ""
               }`}
               onDragOver={(e) => {
                 const targetElement = document.elementFromPoint(
@@ -198,6 +215,7 @@ const DragDropComponent: React.FC<dragProps> = ({
               }}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
+              onClick={() => handleClick(target.no)}
               data-target-id={target.id}
               data-droppable-target={true}
             >
