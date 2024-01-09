@@ -594,7 +594,7 @@ const ListeningTest: React.FC = () => {
 
   return (
     <div className={styles.step_content}>
-      <TestHeader />
+      <TestHeader type="listening" seconds={1880} />
       <MarkDialog
         mousePosition={mousePosition}
         isShow={showMark}

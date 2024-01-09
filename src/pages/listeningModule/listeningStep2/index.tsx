@@ -11,12 +11,16 @@ const ListeningStep2: React.FC = () => {
 
   const toNextStep = () => {
     console.log(location.state, "location");
-    navigate("/listeningStep3");
+    navigate("/listeningStep3", {
+      state: {
+        id: location.state.id,
+      },
+    });
   };
 
   return (
     <div className={styles.step_content}>
-      <TestHeader />
+      <TestHeader type="listening" seconds={1880} />
       <div className={styles.info_box}>
         <div className={styles.info_line}>
           <img src={sound} alt="" className={styles.check_icon} />

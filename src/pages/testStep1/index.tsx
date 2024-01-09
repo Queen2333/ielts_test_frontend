@@ -4,19 +4,28 @@ import TestHeader from '../../components/testHeader';
 import checkIcon from "../../assets/check_icon.png";
 import tipIcon from "../../assets/tip_icon.png";
 import closeIcon from "../../assets/close_icon.png";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 
 const TestStep1: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toNextStep = () => {
-    navigate("/listeningStep2");
-  }
+    console.log(location.state, "state");
+    navigate(`/${location.state.type}Step2`, {
+      state: {
+        id: location.state.id,
+        type: location.state.type,
+      },
+    });
+  };
 
   return (
     <div className={styles.step_content}>
-      <TestHeader />
+      <TestHeader
+        type={location.state.type}
+        seconds={location.state.type === "reading" ? 3600 : 1880}
+      />
       <div className={styles.info_box}>
         <div className={styles.info_line}>
           <img src={checkIcon} alt="" className={styles.check_icon} />
@@ -62,7 +71,7 @@ const TestStep1: React.FC = () => {
     </div> */}
     </div>
   );
-}
+};
 
 
 export default TestStep1;

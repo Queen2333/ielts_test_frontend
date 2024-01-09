@@ -9,7 +9,7 @@ const ListeningStep3: React.FC = () => {
 
   const toNextStep = () => {
     console.log(location.state, "location");
-    navigate("/listeningModule", {
+    navigate("/readingModule", {
       state: {
         id: location.state.id,
       },
@@ -18,14 +18,14 @@ const ListeningStep3: React.FC = () => {
 
   return (
     <div className={styles.step_content}>
-      <TestHeader type="listening" seconds={1880} />
+      <TestHeader type="reading" seconds={3600} />
       <div className={styles.info_box}>
-        <h5 className={`c-font fwb ${styles.title}`}>IELTS Listening</h5>
+        <h5 className={`c-font fwb ${styles.title}`}>IELTS Academic Reading</h5>
         <p
           className={`font-14 fwn ${styles.desc}`}
           style={{ marginBottom: "1rem" }}
         >
-          Time: Approximately 30 minutes
+          Time: 1 hour
         </p>
         <h5 className={`c-font fwb ${styles.title}`}>
           INSTRUCTIONS TO CANDIDATES
@@ -62,17 +62,9 @@ const ListeningStep3: React.FC = () => {
           </div>
           <div className={`${styles.content_text} flex-alc`}>
             <span className={styles.dot}></span>
-            <span>There are four parts to the test</span>
-          </div>
-          <div className={`${styles.content_text} flex-alc`}>
-            <span className={styles.dot}></span>
-            <span>You will hear each part once.</span>
-          </div>
-          <div className={`${styles.content_text} flex-alc`}>
-            <span className={styles.dot}></span>
             <span>
-              For each part of the test there will be time for you to look
-              through the questions and time for you to check your answers.
+              The test clock will show you when there are 10 minutes and 5
+              minutes remaining.
             </span>
           </div>
         </div>

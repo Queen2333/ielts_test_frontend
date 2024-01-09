@@ -9,7 +9,9 @@ import CustomizedTest from '../pages/customizedTest';
 import TestStep1 from "../pages/testStep1";
 import ListeningStep2 from "../pages/listeningModule/listeningStep2";
 import ListeningStep3 from "../pages/listeningModule/listeningStep3";
-import ListeningModule from "../pages/listeningModule/listeningtest";
+import ListeningModule from "../pages/listeningModule/listeningTest";
+import ReadingStep2 from "../pages/readingModule/readingStep2";
+import ReadingModule from "../pages/readingModule/readingTest";
 
 const routes: any[] = [
   {
@@ -63,6 +65,16 @@ const routes: any[] = [
     name: "ListeningModule",
     path: "listeningModule",
     element: <ListeningModule />,
+  },
+  {
+    name: "ReadingStep2",
+    path: "readingStep2",
+    element: <ReadingStep2 />,
+  },
+  {
+    name: "ReadingModule",
+    path: "readingModule",
+    element: <ReadingModule />,
   },
   {
     name: "root",

@@ -6,6 +6,7 @@ import DynamicTable from "../../components/dynamicTable";
 
 const CambridgeIelts: React.FC = () => {
   const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = useState("listening");
   const [pageQuery, setPageQuery] = useState({
     total: 100,
     current: 1,
@@ -57,12 +58,14 @@ const CambridgeIelts: React.FC = () => {
     navigate("/testStep1", {
       state: {
         id: text.id,
+        type: currentTab,
       },
     });
   };
 
   const selectTab = (key: string) => {
     console.log(key, "changeTab");
+    setCurrentTab(key);
   };
 
   const goToRecords = () => {
