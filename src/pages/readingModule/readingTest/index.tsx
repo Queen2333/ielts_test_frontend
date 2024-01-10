@@ -47,44 +47,83 @@ const questionModule: any[] = [
             question: "Phi Phi is located 46km south of Phuket.",
             answer: "",
           },
+          {
+            id: 2,
+            no: "2",
+            question: "Phi Phi is located 46km south of Phuket.",
+            answer: "",
+          },
+          {
+            id: 3,
+            no: "3",
+            question: "Phi Phi is located 46km south of Phuket.",
+            answer: "",
+          },
+          {
+            id: 4,
+            no: "4",
+            question: "Phi Phi is located 46km south of Phuket.",
+            answer: "",
+          },
+          {
+            id: 5,
+            no: "5",
+            question: "Phi Phi is located 46km south of Phuket.",
+            answer: "",
+          },
         ],
       },
       {
         type: "choice",
-        title: "Choose One letters, A-D.",
         question_list: [
-          {
-            id: 5,
-            no: "5",
-            question: "The company deals mostly with:",
-            answer: "",
-            options: [
-              { label: "A", text: "Big city." },
-              { label: "B", text: "Nature holidays." },
-              { label: "C", text: "Nepal." },
-            ],
-          },
           {
             id: 6,
             no: "6",
-            question: "The overseas consultants deal mostly with:",
+            question:
+              "After the space ship didn't show up on the fateful day, the members of flying saucer doomsday cult",
             answer: "",
             options: [
-              { label: "A", text: "Asia." },
-              { label: "B", text: "North America." },
-              { label: "C", text: "Europe." },
+              {
+                label: "A",
+                text: "didn't want to admit the uncomfortable truth and still believed that the world would self destruct.",
+              },
+              {
+                label: "B",
+                text: "were embarrassed and humiliated because of their failure.",
+              },
+              {
+                label: "C",
+                text: "wanted media attention to say that they saved the planet.",
+              },
+            ],
+          },
+          {
+            id: 7,
+            no: "7",
+            question:
+              "The main reason why people fight cognitive dissonance is",
+            answer: "",
+            options: [
+              { label: "A", text: "a desire to reduce the inner tension." },
+              {
+                label: "B",
+                text: "people's unwillingness to accept their mistakes.",
+              },
+              {
+                label: "C",
+                text: "wish to avoid the awkward feeling of lying for not a good reason.",
+              },
             ],
           },
         ],
       },
       {
         type: "multi_choice",
-        title: "Choose TWO letters, A-E.",
         question_list: [
           {
-            id: 7,
-            no: "7-8",
-            answer_count: 2,
+            id: 8,
+            no: "8-10",
+            answer_count: 3,
             question:
               "Which THREE things do Phil and Stella still have to decide on?",
             answer: [],
@@ -98,21 +137,6 @@ const questionModule: any[] = [
           },
           {
             id: 9,
-            no: "9-10",
-            answer_count: 2,
-            question:
-              "Which THREE things do Phil and Stella still have to decide on?",
-            answer: [],
-            options: [
-              { label: "A", text: "how to analyse their results" },
-              { label: "B", text: "their methods of presentation" },
-              { label: "C", text: "the design of their questionnaire" },
-              { label: "D", text: "the location of their survey" },
-              { label: "E", text: "weather variables to be measured" },
-            ],
-          },
-          {
-            id: 11,
             no: "11-13",
             answer_count: 3,
             question:
@@ -284,7 +308,6 @@ const questionModule: any[] = [
       },
       {
         type: "multi_choice",
-        title: "Choose TWO letters, A-E.",
         question_list: [
           {
             id: "129",
@@ -431,6 +454,11 @@ const ReadingTest: React.FC = () => {
   const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
     switch (type) {
+      case "true_or_false":
+        e.stopPropagation();
+        questionType[part].type_list[index].question_list[idx].answer =
+          e.target.value;
+        break;
       case "choice":
         e.stopPropagation();
         questionType[part].type_list[index].question_list[idx].answer =
@@ -519,8 +547,18 @@ const ReadingTest: React.FC = () => {
     });
   };
 
-  const computeQuestion = (no: string, length: number) => {
-    return `${no}${length > 1 ? `-${Number(no) + length}` : ""}`;
+  const computeQuestion = (item: any) => {
+    const length = item.question_list.length;
+    if (item.type === "multi_choice") {
+      return `${item.question_list[0].no.split("-")[0]}${
+        length > 1
+          ? `-${Number(item.question_list[length - 1].no.split("-")[1])}`
+          : ""
+      }`;
+    }
+    return `${item.question_list[0].no}${
+      length > 1 ? `-${Number(item.question_list[0].no) + length - 1}` : ""
+    }`;
   };
 
   return (
@@ -561,21 +599,37 @@ const ReadingTest: React.FC = () => {
               className="overflow_auto"
             >
               {questionType[part].type_list.map((item: any, index: number) => (
-                <div key={index}>
+                <div key={index} className="font-16 lh-30">
+                  <p className="fwb">{`Questions ${computeQuestion(item)}`}</p>
                   {item.type === "true_or_false" && (
                     <div>
                       <div>
                         <p>
-                          {`Questions ${computeQuestion(
-                            item.question_list[0].no,
-                            item.question_list.length
-                          )}`}
+                          {`Do the following statements agree with the information
+                          given in Reading Passage ${part + 1} ?`}
                         </p>
-                        <p>
-                          Choose TRUE if the statement agrees with the
-                          information given in the text, choose FALSE if the
-                          statement contradicts the information, or choose NOT
-                          GIVEN if there is no information on this.
+                        <p className="mb-10">
+                          {`In boxes ${computeQuestion(
+                            item
+                          )} on your answer sheet, write`}
+                        </p>
+                        <p className={`flex-alc`}>
+                          <span className={styles.title_left}>TRUE</span>
+                          <span>
+                            if the statement is true according to the passage
+                          </span>
+                        </p>
+                        <p className={`flex-alc`}>
+                          <span className={styles.title_left}>FALSE</span>
+                          <span>
+                            if the statement is false according to the passage
+                          </span>
+                        </p>
+                        <p className={`flex-alc mb-10`}>
+                          <span className={styles.title_left}>NOT GIVEN</span>
+                          <span>
+                            if the information is not given in the passage
+                          </span>
                         </p>
                       </div>
                       {item.question_list.map((i: any, idx: number) => (
@@ -607,7 +661,6 @@ const ReadingTest: React.FC = () => {
                       ))}
                     </div>
                   )}
-                  {/* <p className="font-1rem lh-2rem mb-20">{item.title}</p> */}
                   {item.type === "fill_in_blanks" && (
                     <div className="lh-3rem mb-30">
                       {item.article_content
@@ -642,14 +695,17 @@ const ReadingTest: React.FC = () => {
                         ))}
                     </div>
                   )}
-                  <div className="flex-jcb flex-wrap">
-                    {item.type === "choice" &&
-                      item.question_list.map((i: any, idx: number) => (
-                        <div
-                          key={idx}
-                          style={{ width: "50%" }}
-                          className="mb-30"
-                        >
+                  {item.type === "choice" && (
+                    <div>
+                      <p>Choose the correct letter.</p>
+                      <p className="mb-10">
+                        {`Write the correct letter in boxes ${computeQuestion(
+                          item
+                        )} on your answer
+                        sheet.`}
+                      </p>
+                      {item.question_list.map((i: any, idx: number) => (
+                        <div key={idx} className="mb-30">
                           <p
                             className={`mb-20 lh-2rem font-1rem fwb pointer ${
                               currentFocus.type === "choice" &&
@@ -677,52 +733,50 @@ const ReadingTest: React.FC = () => {
                           </Radio.Group>
                         </div>
                       ))}
-                    {item.type === "multi_choice" &&
-                      item.question_list.map((i: any, idx: number) => (
-                        <div
-                          key={idx}
-                          style={{ width: "50%" }}
-                          className="mb-30"
+                    </div>
+                  )}
+                  {item.type === "multi_choice" &&
+                    item.question_list.map((i: any, idx: number) => (
+                      <div key={idx} className="mb-30">
+                        <p>{`Choose ${i.answer_count} correct answers.`}</p>
+                        <p
+                          className={`mb-20 lh-2rem font-1rem fwb pointer ${
+                            currentFocus.type === "multi_choice" &&
+                            currentFocus.typeIndex === index &&
+                            currentFocus.questionIndex >=
+                              formatNo(i.no.split("-")[0]) &&
+                            currentFocus.questionIndex <=
+                              formatNo(i.no.split("-")[1])
+                              ? styles.selected_background
+                              : ""
+                          }`}
+                          onClick={() =>
+                            focusQues(item.type, index, i.no.split("-")[0])
+                          }
+                        >{`${i.no} ${i.question}`}</p>
+                        <Checkbox.Group
+                          style={{ fontSize: "1rem" }}
+                          value={i.answer}
+                          onChange={(e) =>
+                            changeChoice(e, index, idx, item.type)
+                          }
                         >
-                          <p
-                            className={`mb-20 lh-2rem font-1rem fwb pointer ${
-                              currentFocus.type === "multi_choice" &&
-                              currentFocus.typeIndex === index &&
-                              currentFocus.questionIndex >=
-                                formatNo(i.no.split("-")[0]) &&
-                              currentFocus.questionIndex <=
-                                formatNo(i.no.split("-")[1])
-                                ? styles.selected_background
-                                : ""
-                            }`}
-                            onClick={() =>
-                              focusQues(item.type, index, i.no.split("-")[0])
-                            }
-                          >{`${i.no} ${i.question}`}</p>
-                          <Checkbox.Group
-                            style={{ fontSize: "1rem" }}
-                            value={i.answer}
-                            onChange={(e) =>
-                              changeChoice(e, index, idx, item.type)
-                            }
-                          >
-                            <Space direction="vertical">
-                              {i.options.map((value: any, id: number) => (
-                                <Checkbox
-                                  value={value.label}
-                                  key={id}
-                                  onChange={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  {value.label}. {value.text}
-                                </Checkbox>
-                              ))}
-                            </Space>
-                          </Checkbox.Group>
-                        </div>
-                      ))}
-                  </div>
+                          <Space direction="vertical">
+                            {i.options.map((value: any, id: number) => (
+                              <Checkbox
+                                value={value.label}
+                                key={id}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                }}
+                              >
+                                {value.label}. {value.text}
+                              </Checkbox>
+                            ))}
+                          </Space>
+                        </Checkbox.Group>
+                      </div>
+                    ))}
 
                   {item.type === "matching" && (
                     <div className="mb-30">
