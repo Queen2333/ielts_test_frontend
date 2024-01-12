@@ -58,7 +58,7 @@ const TestBar: React.FC<PartProps> = ({
   };
 
   const changeQuestion = (type: string) => {
-    console.log(type, "type");
+    console.log(type, questionList, "type");
     if (type === "prev") {
       if (currentPart === 0 && currentQuestion === 0) return; // part1 question1
       if (currentQuestion === 0) {

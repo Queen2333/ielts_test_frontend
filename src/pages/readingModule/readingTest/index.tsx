@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import styles from "./styles.module.less";
 import rangy from "rangy";
 import "rangy/lib/rangy-classapplier";
@@ -171,29 +171,29 @@ const questionModule: any[] = [
         ],
         question_list: [
           {
-            id: "88",
-            no: "11",
+            id: 10,
+            no: "14",
             content: "Anna",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: "99",
-            no: "12",
+            id: 11,
+            no: "15",
             content: "Benny",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: "100",
-            no: "13",
+            id: 12,
+            no: "16",
             content: "John",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
-            id: "111",
-            no: "14",
+            id: 13,
+            no: "17",
             content: "James",
             matchedOption: null,
             isDraggingOver: false,
@@ -201,50 +201,74 @@ const questionModule: any[] = [
         ],
       },
       {
-        type: "map",
-        title:
-          "Label the map below.Write the correct letter, A-E, next to questions 16-20.",
+        type: "fill_in_blanks",
+        title: `Complete the notes.<br>
+          Write <span style="font-weight: bold">ONE WORD ONLY</span> from the passage in each gap.`,
+        article_content: `The total rent: Peter £ 110 & Jim £ &#8203;【blank】&#8203;<br/>
+          Car parking: in the &#8203;【blank】&#8203;<br/>
+          A place to buy things: &#8203;【blank】&#8203;, because Jim works there.<br/>
+          The fees they should share: &#8203;【blank】&#8203; fees<br/>
+          Recent interview:<br/>
+          A company is not one entity comprised of components, but a living organism composed of cells.<br/>
+          Manjeet's motto is&#8203;【blank】&#8203;<br/>
+          The rate of staff turnover has been reduced.<br/>
+          A &#8203;【blank】&#8203;can be from any other company.<br/>
+          Grades are not used for&#8203;【blank】&#8203;<br/>
+          The complaint form known as a &#8203;【blank】&#8203;has access to all employees online.<br/>
+          The manager can receive any complaints concerning air conditioning, food quality and &#8203;【blank】&#8203;`,
         picture: "https://ieltscat-oss.xdf.cn/1004/1592987703205371.png",
         question_list: [
           {
-            id: "120",
-            no: "15",
-            answer_count: 6,
+            id: 14,
+            no: "18",
             content: "residents",
             answer: "",
           },
           {
-            id: "121",
-            no: "16",
-            answer_count: 6,
+            id: 15,
+            no: "19",
             content: "railway",
             answer: "",
           },
           {
-            id: "122",
-            no: "17",
-            answer_count: 6,
+            id: 16,
+            no: "20",
             content: "playground",
             answer: "",
           },
           {
-            id: "123",
-            no: "18",
-            answer_count: 6,
+            id: 17,
+            no: "21",
             content: "mountains",
             answer: "",
           },
           {
-            id: "124",
-            no: "19",
-            answer_count: 6,
+            id: 18,
+            no: "22",
             content: "garden",
             answer: "",
           },
           {
-            id: "125",
-            no: "20",
-            answer_count: 6,
+            id: 19,
+            no: "23",
+            content: "hotel",
+            answer: "",
+          },
+          {
+            id: 20,
+            no: "24",
+            content: "hotel",
+            answer: "",
+          },
+          {
+            id: 21,
+            no: "25",
+            content: "hotel",
+            answer: "",
+          },
+          {
+            id: 22,
+            no: "26",
             content: "hotel",
             answer: "",
           },
@@ -261,8 +285,8 @@ const questionModule: any[] = [
         title: "Choose One letters, A-D.",
         question_list: [
           {
-            id: "125",
-            no: "21",
+            id: 23,
+            no: "27",
             question: "The company deals mostly with:",
             answer: "",
             options: [
@@ -272,8 +296,8 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: "126",
-            no: "22",
+            id: 24,
+            no: "28",
             question: "The company deals mostly with:",
             answer: "",
             options: [
@@ -283,8 +307,8 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: "127",
-            no: "23",
+            id: 25,
+            no: "29",
             question: "The company deals mostly with:",
             answer: "",
             options: [
@@ -294,8 +318,8 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: "128",
-            no: "24",
+            id: 26,
+            no: "30",
             question: "The company deals mostly with:",
             answer: "",
             options: [
@@ -310,8 +334,8 @@ const questionModule: any[] = [
         type: "multi_choice",
         question_list: [
           {
-            id: "129",
-            no: "25-27",
+            id: 27,
+            no: "31-33",
             answer_count: 3,
             question:
               "Which THREE things do Phil and Stella still have to decide on?",
@@ -325,9 +349,24 @@ const questionModule: any[] = [
             ],
           },
           {
-            id: "130",
-            no: "28-30",
+            id: 28,
+            no: "34-36",
             answer_count: 3,
+            question:
+              "Which THREE things do Phil and Stella still have to decide on?",
+            answer: [],
+            options: [
+              { label: "A", text: "how to analyse their results" },
+              { label: "B", text: "their methods of presentation" },
+              { label: "C", text: "the design of their questionnaire" },
+              { label: "D", text: "the location of their survey" },
+              { label: "E", text: "weather variables to be measured" },
+            ],
+          },
+          {
+            id: 29,
+            no: "37-40",
+            answer_count: 4,
             question:
               "Which THREE things do Phil and Stella still have to decide on?",
             answer: [],
@@ -453,28 +492,12 @@ const ReadingTest: React.FC = () => {
   // 切换答案
   const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
-    switch (type) {
-      case "true_or_false":
-        e.stopPropagation();
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
-      case "choice":
-        e.stopPropagation();
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
-      case "multi_choice":
-        questionType[part].type_list[index].question_list[idx].answer = e;
-        break;
-      case "fill_in_blanks":
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
-      case "map":
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
+    e.stopPropagation();
+    if (type === "multi_choice") {
+      questionType[part].type_list[index].question_list[idx].answer = e;
+    } else {
+      questionType[part].type_list[index].question_list[idx].answer =
+        e.target.value;
     }
     setQuestionType([...questionType]);
   };
@@ -521,10 +544,11 @@ const ReadingTest: React.FC = () => {
   };
 
   const formatNo = (no: string) => {
-    return Number(no) % 10 > 0
-      ? (Number(no) % 10) - 1
-      : Number(no) >= 10
-      ? 9
+    const length = readingQuestionNumber[part].children.length;
+    return Number(no) % length > 0
+      ? (Number(no) % length) - 1
+      : Number(no) >= length
+      ? length - 1
       : Number(no) - 1;
   };
 
@@ -561,6 +585,51 @@ const ReadingTest: React.FC = () => {
     }`;
   };
 
+  // 阅读题传入testBar的列表
+  const readingQuestionNumber = useMemo(() => {
+    let prevPartLastIndex = 0;
+    return questionModule.map((part, partIndex) => {
+      let count = part.type_list.reduce((total: number, item: any) => {
+        return (
+          total +
+          (item.type === "multi_choice"
+            ? item.question_list.reduce(
+                (multiTotal: number, multiItem: any) =>
+                  multiTotal + multiItem.answer_count,
+                0
+              )
+            : item.question_list.length)
+        );
+      }, 0);
+      const children = Array.from({ length: count }, (_, i) => ({
+        idx: i + 1 + prevPartLastIndex,
+        isReview: false,
+        checked: i === 0,
+      }));
+      prevPartLastIndex += count;
+
+      return {
+        title: `Part${partIndex + 1}`,
+        children: children,
+      };
+    });
+  }, [questionModule]);
+
+  const isFocus = (type: string, index: number, no: string) => {
+    if (type === "multi_choice") {
+      return (
+        currentFocus.type === "multi_choice" &&
+        currentFocus.typeIndex === index &&
+        currentFocus.questionIndex >= formatNo(no.split("-")[0]) &&
+        currentFocus.questionIndex <= formatNo(no.split("-")[1])
+      );
+    }
+    return (
+      currentFocus.type === type &&
+      currentFocus.typeIndex === index &&
+      currentFocus.questionIndex === formatNo(no)
+    );
+  };
   return (
     <div className={styles.step_content}>
       <TestHeader type="reading" seconds={3600} />
@@ -577,8 +646,7 @@ const ReadingTest: React.FC = () => {
             {questionType[part].part}
           </p>
           <p className={`${styles.part_desc} font-16`}>
-            Read the text below and answer questions
-            {questionType[part].partNumber}.
+            {`Read the text below and answer questions ${questionType[part].partNumber}`}
           </p>
         </Card>
         <Card className={`${styles.test_card}`}>
@@ -636,33 +704,34 @@ const ReadingTest: React.FC = () => {
                         <div key={idx} className="mb-30">
                           <p
                             className={`mb-20 lh-2rem font-1rem fwb pointer ${
-                              currentFocus.type === "true_or_false" &&
-                              currentFocus.typeIndex === index &&
-                              currentFocus.questionIndex === formatNo(i.no)
+                              isFocus("true_or_false", index, i.no)
                                 ? styles.selected_background
-                                : ""
-                            }`}
+                                : styles.not_selected
+                            } ${styles.question_style}`}
                             onClick={() => focusQues(item.type, index, i.no)}
                           >{`${i.no} ${i.question}`}</p>
-                          <Radio.Group
-                            style={{ fontSize: "1rem" }}
-                            value={i.answer}
-                            onChange={(e) =>
-                              changeChoice(e, index, idx, item.type)
-                            }
-                          >
-                            <Space direction="vertical">
-                              <Radio value="TRUE">TRUE</Radio>
-                              <Radio value="FALSE">FALSE</Radio>
-                              <Radio value="NOT GIVEN">NOT GIVEN</Radio>
-                            </Space>
-                          </Radio.Group>
+                          {isFocus("true_or_false", index, i.no) && (
+                            <Radio.Group
+                              style={{ fontSize: "1rem" }}
+                              value={i.answer}
+                              onChange={(e) =>
+                                changeChoice(e, index, idx, item.type)
+                              }
+                            >
+                              <Space direction="vertical">
+                                <Radio value="TRUE">TRUE</Radio>
+                                <Radio value="FALSE">FALSE</Radio>
+                                <Radio value="NOT GIVEN">NOT GIVEN</Radio>
+                              </Space>
+                            </Radio.Group>
+                          )}
                         </div>
                       ))}
                     </div>
                   )}
                   {item.type === "fill_in_blanks" && (
                     <div className="lh-3rem mb-30">
+                      <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
                       {item.article_content
                         .split("【blank】")
                         .map((i: any, idx: number) => (
@@ -708,29 +777,29 @@ const ReadingTest: React.FC = () => {
                         <div key={idx} className="mb-30">
                           <p
                             className={`mb-20 lh-2rem font-1rem fwb pointer ${
-                              currentFocus.type === "choice" &&
-                              currentFocus.typeIndex === index &&
-                              currentFocus.questionIndex === formatNo(i.no)
+                              isFocus("choice", index, i.no)
                                 ? styles.selected_background
-                                : ""
-                            }`}
+                                : styles.not_selected
+                            } ${styles.question_style}`}
                             onClick={() => focusQues(item.type, index, i.no)}
                           >{`${i.no} ${i.question}`}</p>
-                          <Radio.Group
-                            style={{ fontSize: "1rem" }}
-                            value={i.answer}
-                            onChange={(e) =>
-                              changeChoice(e, index, idx, item.type)
-                            }
-                          >
-                            <Space direction="vertical">
-                              {i.options.map((value: any, id: number) => (
-                                <Radio value={value.label} key={id}>
-                                  {value.label}. {value.text}
-                                </Radio>
-                              ))}
-                            </Space>
-                          </Radio.Group>
+                          {isFocus("choice", index, i.no) && (
+                            <Radio.Group
+                              style={{ fontSize: "1rem" }}
+                              value={i.answer}
+                              onChange={(e) =>
+                                changeChoice(e, index, idx, item.type)
+                              }
+                            >
+                              <Space direction="vertical">
+                                {i.options.map((value: any, id: number) => (
+                                  <Radio value={value.label} key={id}>
+                                    {value.label}. {value.text}
+                                  </Radio>
+                                ))}
+                              </Space>
+                            </Radio.Group>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -741,40 +810,37 @@ const ReadingTest: React.FC = () => {
                         <p>{`Choose ${i.answer_count} correct answers.`}</p>
                         <p
                           className={`mb-20 lh-2rem font-1rem fwb pointer ${
-                            currentFocus.type === "multi_choice" &&
-                            currentFocus.typeIndex === index &&
-                            currentFocus.questionIndex >=
-                              formatNo(i.no.split("-")[0]) &&
-                            currentFocus.questionIndex <=
-                              formatNo(i.no.split("-")[1])
+                            isFocus("multi_choice", index, i.no)
                               ? styles.selected_background
-                              : ""
-                          }`}
+                              : styles.not_selected
+                          } ${styles.question_style}`}
                           onClick={() =>
                             focusQues(item.type, index, i.no.split("-")[0])
                           }
                         >{`${i.no} ${i.question}`}</p>
-                        <Checkbox.Group
-                          style={{ fontSize: "1rem" }}
-                          value={i.answer}
-                          onChange={(e) =>
-                            changeChoice(e, index, idx, item.type)
-                          }
-                        >
-                          <Space direction="vertical">
-                            {i.options.map((value: any, id: number) => (
-                              <Checkbox
-                                value={value.label}
-                                key={id}
-                                onChange={(e) => {
-                                  e.stopPropagation();
-                                }}
-                              >
-                                {value.label}. {value.text}
-                              </Checkbox>
-                            ))}
-                          </Space>
-                        </Checkbox.Group>
+                        {isFocus("multi_choice", index, i.no) && (
+                          <Checkbox.Group
+                            style={{ fontSize: "1rem" }}
+                            value={i.answer}
+                            onChange={(e) =>
+                              changeChoice(e, index, idx, item.type)
+                            }
+                          >
+                            <Space direction="vertical">
+                              {i.options.map((value: any, id: number) => (
+                                <Checkbox
+                                  value={value.label}
+                                  key={id}
+                                  onChange={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  {value.label}. {value.text}
+                                </Checkbox>
+                              ))}
+                            </Space>
+                          </Checkbox.Group>
+                        )}
                       </div>
                     ))}
 
@@ -826,7 +892,7 @@ const ReadingTest: React.FC = () => {
         </Card>
         <TestBar
           chooseQuestion={chooseQuestion}
-          questionList={listeningQuestionNumber}
+          questionList={readingQuestionNumber}
           currentFocus={currentFocus}
         />
       </div>

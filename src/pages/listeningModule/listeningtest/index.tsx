@@ -503,23 +503,12 @@ const ListeningTest: React.FC = () => {
   // 切换答案
   const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
-    switch (type) {
-      case "choice":
-        e.stopPropagation();
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
-      case "multi_choice":
-        questionType[part].type_list[index].question_list[idx].answer = e;
-        break;
-      case "fill_in_blanks":
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
-      case "map":
-        questionType[part].type_list[index].question_list[idx].answer =
-          e.target.value;
-        break;
+    e.stopPropagation();
+    if (type === "multi_choice") {
+      questionType[part].type_list[index].question_list[idx].answer = e;
+    } else {
+      questionType[part].type_list[index].question_list[idx].answer =
+        e.target.value;
     }
     setQuestionType([...questionType]);
   };
