@@ -399,8 +399,8 @@ const ReadingTest: React.FC = () => {
     questionIndex: 0,
   });
   const [inputRefs, setInputRefs] = useState(
-    Array.from({ length: 4 }, () =>
-      Array.from({ length: 10 }, () =>
+    Array.from({ length: 3 }, () =>
+      Array.from({ length: 14 }, () =>
         useRef({
           focus: () => {},
         })
@@ -469,9 +469,8 @@ const ReadingTest: React.FC = () => {
     // 找出是哪个type
     const targetPart = questionType[part];
     const typeIndex = findTypeIndex(targetPart, question);
-    console.log(part, typeIndex, question);
+    console.log(part, typeIndex, question, "change");
 
-    // const _questionNo =
     // 聚焦题目
     setCurrentFocus({
       type: targetPart.type_list[typeIndex].type,
@@ -481,9 +480,8 @@ const ReadingTest: React.FC = () => {
     });
 
     setTimeout(() => {
-      if (
-        ["fill_in_blanks", "map"].includes(targetPart.type_list[typeIndex].type)
-      ) {
+      if (["fill_in_blanks"].includes(targetPart.type_list[typeIndex].type)) {
+        console.log(inputRefs, "inputRefs[part][question]");
         inputRefs[part][question] && inputRefs[part][question].current.focus();
       }
     }, 0);
@@ -533,8 +531,9 @@ const ReadingTest: React.FC = () => {
     typeIndex: number,
     questionIndex: string
   ) => {
-    console.log(type, typeIndex, questionIndex, "focus");
     const _questionIndex: number = formatNo(questionIndex);
+    console.log(type, typeIndex, _questionIndex, "focus");
+
     setCurrentFocus({
       type,
       partIndex: part,
@@ -545,6 +544,7 @@ const ReadingTest: React.FC = () => {
 
   const formatNo = (no: string) => {
     const length = readingQuestionNumber[part].children.length;
+    console.log(length, "length");
     return Number(no) % length > 0
       ? (Number(no) % length) - 1
       : Number(no) >= length
