@@ -24,6 +24,7 @@ interface dragProps {
     typeIndex: number;
     questionIndex: number;
   };
+  type: string;
   dropEnd: (targets: Target[]) => void;
   clickTarget: (no: string) => void;
 }
@@ -32,6 +33,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   targetList,
   optionList,
   currentFocus,
+  type,
   dropEnd,
   clickTarget,
 }) => {
@@ -170,9 +172,17 @@ const DragDropComponent: React.FC<dragProps> = ({
     clickTarget(no);
   };
   return (
-    <div className={styles["drag-drop-matching-container"]}>
+    <div
+      className={
+        styles[
+          type === "listening"
+            ? "drag-drop-matching-container"
+            : "drag-drop-reading-match-container"
+        ]
+      }
+    >
       <div
-        className={styles["targets-container"]}
+        className={type === "listening" ? styles["targets-container"] : ""}
         onDrop={(e) => {
           const targetElement = document.elementFromPoint(e.clientX, e.clientY);
 

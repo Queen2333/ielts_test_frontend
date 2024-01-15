@@ -714,6 +714,7 @@ const ListeningTest: React.FC = () => {
                     optionList={item.options}
                     targetList={item.question_list}
                     currentFocus={currentFocus}
+                    type="listening"
                     dropEnd={dropEnd}
                     clickTarget={clickTarget}
                   />

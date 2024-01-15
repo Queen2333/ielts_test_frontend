@@ -490,10 +490,10 @@ const ReadingTest: React.FC = () => {
   // 切换答案
   const changeChoice = (e: any, index: number, idx: number, type: string) => {
     console.log(e, index, idx, "change");
-    e.stopPropagation();
     if (type === "multi_choice") {
       questionType[part].type_list[index].question_list[idx].answer = e;
     } else {
+      e.stopPropagation();
       questionType[part].type_list[index].question_list[idx].answer =
         e.target.value;
     }
@@ -544,7 +544,6 @@ const ReadingTest: React.FC = () => {
 
   const formatNo = (no: string) => {
     const length = readingQuestionNumber[part].children.length;
-    console.log(length, "length");
     return Number(no) % length > 0
       ? (Number(no) % length) - 1
       : Number(no) >= length
@@ -847,6 +846,7 @@ const ReadingTest: React.FC = () => {
                   {item.type === "matching" && (
                     <div className="mb-30">
                       <DragNDrop
+                        type="reading"
                         optionList={item.options}
                         targetList={item.question_list}
                         currentFocus={currentFocus}
