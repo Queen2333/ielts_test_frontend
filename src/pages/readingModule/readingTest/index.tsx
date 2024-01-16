@@ -845,11 +845,16 @@ const ReadingTest: React.FC = () => {
 
                   {item.type === "matching" && (
                     <div className="mb-30">
+                      <p>
+                        Look at the following statements (
+                        {computeQuestion(item)}) and the list of options.
+                      </p>
                       <DragNDrop
                         type="reading"
                         optionList={item.options}
                         targetList={item.question_list}
                         currentFocus={currentFocus}
+                        readingQuestionNumber={readingQuestionNumber}
                         dropEnd={dropEnd}
                         clickTarget={clickTarget}
                       />

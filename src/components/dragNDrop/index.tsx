@@ -25,6 +25,7 @@ interface dragProps {
     questionIndex: number;
   };
   type: string;
+  readingQuestionNumber?: any[];
   dropEnd: (targets: Target[]) => void;
   clickTarget: (no: string) => void;
 }
@@ -34,6 +35,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   optionList,
   currentFocus,
   type,
+  readingQuestionNumber,
   dropEnd,
   clickTarget,
 }) => {
@@ -171,6 +173,18 @@ const DragDropComponent: React.FC<dragProps> = ({
   const handleClick = (no: string) => {
     clickTarget(no);
   };
+
+  const formatNo = (no: string) => {
+    const length =
+      type === "reading"
+        ? readingQuestionNumber?.[currentFocus.partIndex].children.length
+        : 10;
+    return (
+      currentFocus.partIndex * length + currentFocus.questionIndex ===
+      Number(no) - 1
+    );
+  };
+
   return (
     <div
       className={
@@ -207,12 +221,7 @@ const DragDropComponent: React.FC<dragProps> = ({
             <div
               className={`pointer ${styles["matched-option"]} ${
                 target.isDraggingOver ? styles["drag-over"] : ""
-              } ${
-                currentFocus.partIndex * 10 + currentFocus.questionIndex ===
-                Number(target.no) - 1
-                  ? styles["focused"]
-                  : ""
-              }`}
+              } ${formatNo(target.no) ? styles["focused"] : ""}`}
               onDragOver={(e) => {
                 const targetElement = document.elementFromPoint(
                   e.clientX,
@@ -248,7 +257,7 @@ const DragDropComponent: React.FC<dragProps> = ({
           </div>
         ))}
       </div>
-      <div className={styles["options-container"]}>
+      <div className={type === "reading" ? styles["options-container"] : ""}>
         {options.map((option) => (
           <div
             key={option.id}
