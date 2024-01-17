@@ -711,6 +711,7 @@ const ListeningTest: React.FC = () => {
               {item.type === "matching" && (
                 <div className="mb-30">
                   <DragNDrop
+                    nb={false}
                     optionList={item.options}
                     targetList={item.question_list}
                     currentFocus={currentFocus}

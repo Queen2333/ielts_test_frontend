@@ -160,8 +160,11 @@ const questionModule: any[] = [
     type_list: [
       {
         type: "matching",
-        title:
-          "What can you find at each of the places below?Choose the correct answer and move it into the gap.",
+        title: `Look at the following statements (Question 9-13) and the list of countries.<br>
+        Match each statement with the correct country, A-G.<br>
+        Choose the correct answer, A-G, and move it into the gap.<br>
+        <span style="font-weight: bold">NB</span> You may use any letter more than once.`,
+        nb: true,
         options: [
           { label: "A", content: "flower", id: "1223" },
           { label: "B", content: "grass", id: "1244" },
@@ -173,28 +176,30 @@ const questionModule: any[] = [
           {
             id: 10,
             no: "14",
-            content: "Anna",
+            content:
+              "During the process, harmful substances are prevented from escaping.",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
             id: 11,
             no: "15",
-            content: "Benny",
+            content: "Water is used to force air through a special device.",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
             id: 12,
             no: "16",
-            content: "John",
+            content: "Techniques used by other countries are being copied.",
             matchedOption: null,
             isDraggingOver: false,
           },
           {
             id: 13,
             no: "17",
-            content: "James",
+            content:
+              "The system can provide services other than energy production.",
             matchedOption: null,
             isDraggingOver: false,
           },
@@ -845,12 +850,12 @@ const ReadingTest: React.FC = () => {
 
                   {item.type === "matching" && (
                     <div className="mb-30">
-                      <p>
-                        Look at the following statements (
-                        {computeQuestion(item)}) and the list of options.
-                      </p>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                      ></div>
                       <DragNDrop
                         type="reading"
+                        nb={item.nb}
                         optionList={item.options}
                         targetList={item.question_list}
                         currentFocus={currentFocus}

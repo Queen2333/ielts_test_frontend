@@ -25,6 +25,7 @@ interface dragProps {
     questionIndex: number;
   };
   type: string;
+  nb: boolean;
   readingQuestionNumber?: any[];
   dropEnd: (targets: Target[]) => void;
   clickTarget: (no: string) => void;
@@ -35,6 +36,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   optionList,
   currentFocus,
   type,
+  nb,
   readingQuestionNumber,
   dropEnd,
   clickTarget,
@@ -59,10 +61,10 @@ const DragDropComponent: React.FC<dragProps> = ({
     if (!target.isDraggingOver) return;
     const draggedItemId = target.matchedOption?.id;
 
-    if (dragItem.current) {
+    if (dragItem.current && !nb) {
       // 将 option 放回原来的位置
       const draggedOption = optionList.find(
-        (option) => option.id === draggedItemId
+        (option) => String(option.id) === String(draggedItemId)
       );
       if (draggedOption) {
         const originalIndex = optionList.indexOf(draggedOption);
@@ -80,7 +82,7 @@ const DragDropComponent: React.FC<dragProps> = ({
     const updatedTargets = targets.map((target) => ({
       ...target,
       matchedOption:
-        target.matchedOption?.id === draggedItemId
+        String(target.matchedOption?.id) === String(draggedItemId)
           ? null
           : target.matchedOption,
       isDraggingOver: false,
@@ -95,29 +97,37 @@ const DragDropComponent: React.FC<dragProps> = ({
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     const draggedItemId = e.dataTransfer.getData("text/plain");
-    console.log(e, "drop");
+    // console.log(e, "drop");
 
     // 一个框只能有一个选项
-    const targetItem = targets.find((target) => target.id === targetId);
+    const targetItem = targets.find(
+      (target) => String(target.id) === String(targetId)
+    );
     if (targetItem?.matchedOption) return;
 
-    const draggedOption = options.find((option) => option.id === draggedItemId);
+    const draggedOption = options.find(
+      (option) => String(option.id) === String(draggedItemId)
+    );
     if (draggedOption) {
       //  更新在外面的选项
-      const updatedOptions = options.filter(
-        (option) => option.id !== draggedItemId
-      );
-      setOptions(updatedOptions);
+      if (!nb) {
+        const updatedOptions = options.filter(
+          (option) => option.id !== draggedItemId
+        );
+        setOptions(updatedOptions);
+      }
 
       // 更新target的状态
       const updatedTargets = targets.map((target) => {
-        if (target.id === targetId) {
+        // console.log(target.id, targetId, draggedOption, "draggedOption");
+
+        if (String(target.id) === String(targetId)) {
           return {
             ...target,
             matchedOption: draggedOption,
             isDraggingOver: false,
           };
-        } else if (target.matchedOption?.id === draggedItemId) {
+        } else if (String(target.matchedOption?.id) === String(draggedItemId)) {
           return { ...target, matchedOption: null, isDraggingOver: false };
         }
         return target;
@@ -133,11 +143,12 @@ const DragDropComponent: React.FC<dragProps> = ({
     e.preventDefault();
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
-      targetElement?.getAttribute("data-target-id") === targetId;
+      String(targetElement?.getAttribute("data-target-id")) ===
+      String(targetId);
 
     const updatedTargets = targets.map((target) => ({
       ...target,
-      isDraggingOver: target.id === targetId && isDraggingOver,
+      isDraggingOver: String(target.id) === String(targetId) && isDraggingOver,
     }));
     setTargets(updatedTargets);
   };
@@ -146,7 +157,7 @@ const DragDropComponent: React.FC<dragProps> = ({
     e.preventDefault();
     const targetId = e.currentTarget.getAttribute("data-target-id");
     if (targetId) {
-      console.log(e, targetId, "enter");
+      // console.log(e, targetId, "enter");
       // handleDragEnterAction(targetId); // 处理拖拽进入时的逻辑
       // 例如，添加拖拽进入时的样式
       // e.currentTarget.classList.add(styles["drag-enter"]); // 请替换为你的实际样式类名
@@ -157,9 +168,9 @@ const DragDropComponent: React.FC<dragProps> = ({
     e.preventDefault();
     const targetId = e.currentTarget.getAttribute("data-target-id");
     if (targetId) {
-      console.log(targetId, "leave");
+      // console.log(targetId, "leave");
       targets.map((item) => {
-        if (item.id === targetId) {
+        if (String(item.id) === String(targetId)) {
           item.isDraggingOver = true;
         }
       });
