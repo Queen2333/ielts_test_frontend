@@ -100,10 +100,10 @@ const DragDropComponent: React.FC<dragProps> = ({
     // console.log(e, "drop");
 
     // 一个框只能有一个选项
-    const targetItem = targets.find(
-      (target) => String(target.id) === String(targetId)
-    );
-    if (targetItem?.matchedOption) return;
+    // const targetItem = targets.find(
+    //   (target) => String(target.id) === String(targetId)
+    // );
+    // if (targetItem?.matchedOption) return;
 
     const draggedOption = options.find(
       (option) => String(option.id) === String(draggedItemId)
@@ -119,15 +119,17 @@ const DragDropComponent: React.FC<dragProps> = ({
 
       // 更新target的状态
       const updatedTargets = targets.map((target) => {
-        // console.log(target.id, targetId, draggedOption, "draggedOption");
-
+        console.log(target.id, targetId, draggedOption, "draggedOption");
         if (String(target.id) === String(targetId)) {
           return {
             ...target,
             matchedOption: draggedOption,
             isDraggingOver: false,
           };
-        } else if (String(target.matchedOption?.id) === String(draggedItemId)) {
+        } else if (
+          String(target.matchedOption?.id) === String(draggedItemId) &&
+          !nb
+        ) {
           return { ...target, matchedOption: null, isDraggingOver: false };
         }
         return target;

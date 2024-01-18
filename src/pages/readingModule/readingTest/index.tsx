@@ -537,7 +537,7 @@ const ReadingTest: React.FC = () => {
     questionIndex: string
   ) => {
     const _questionIndex: number = formatNo(questionIndex);
-    console.log(type, typeIndex, _questionIndex, "focus");
+    console.log(type, typeIndex, _questionIndex, questionIndex, "focus");
 
     setCurrentFocus({
       type,
@@ -548,12 +548,13 @@ const ReadingTest: React.FC = () => {
   };
 
   const formatNo = (no: string) => {
-    const length = readingQuestionNumber[part].children.length;
-    return Number(no) % length > 0
-      ? (Number(no) % length) - 1
-      : Number(no) >= length
-      ? length - 1
-      : Number(no) - 1;
+    if (part === 0) return Number(no) - 1;
+    const length =
+      part > 1
+        ? readingQuestionNumber[part - 1].children.length +
+          readingQuestionNumber[part - 2].children.length
+        : readingQuestionNumber[part - 1].children.length;
+    return Number(no) - length - 1;
   };
 
   // 匹配题拖拽结束
