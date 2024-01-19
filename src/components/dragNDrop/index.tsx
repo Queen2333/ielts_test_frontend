@@ -208,68 +208,77 @@ const DragDropComponent: React.FC<dragProps> = ({
         ]
       }
     >
-      <div
-        className={type === "listening" ? styles["targets-container"] : ""}
-        onDrop={(e) => {
-          const targetElement = document.elementFromPoint(e.clientX, e.clientY);
+      {type !== "heading" && (
+        <div
+          className={type === "listening" ? styles["targets-container"] : ""}
+          onDrop={(e) => {
+            const targetElement = document.elementFromPoint(
+              e.clientX,
+              e.clientY
+            );
 
-          if (targetElement) {
-            const targetId = targetElement.getAttribute("data-target-id");
-            if (targetId) {
-              handleDrop(e, targetId);
+            if (targetElement) {
+              const targetId = targetElement.getAttribute("data-target-id");
+              if (targetId) {
+                handleDrop(e, targetId);
+              }
             }
-          }
-        }}
-        onDragOver={(e) => {
-          const targetElement = document.elementFromPoint(e.clientX, e.clientY);
-          const targetId = targetElement?.getAttribute("data-target-id");
-          if (targetId) {
-            handleDragOver(e, targetId);
-          }
-        }}
-      >
-        {targets.map((target) => (
-          <div key={target.id} className={styles["droppable-target"]}>
-            {target.content}
-            <div
-              className={`pointer ${styles["matched-option"]} ${
-                target.isDraggingOver ? styles["drag-over"] : ""
-              } ${formatNo(target.no) ? styles["focused"] : ""}`}
-              onDragOver={(e) => {
-                const targetElement = document.elementFromPoint(
-                  e.clientX,
-                  e.clientY
-                );
-                const targetId = targetElement?.getAttribute("data-target-id");
-                if (targetId) {
-                  handleDragOver(e, targetId);
-                }
-              }}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onClick={() => handleClick(target.no)}
-              data-target-id={target.id}
-              data-droppable-target={true}
-            >
-              {target.matchedOption && (
-                <div
-                  className={styles["draggable-option"]}
-                  data-option-id={target.matchedOption!.id}
-                  ref={dragItem}
-                  draggable
-                  onDragStart={(e) =>
-                    handleDragStart(e, target.matchedOption!.id)
+          }}
+          onDragOver={(e) => {
+            const targetElement = document.elementFromPoint(
+              e.clientX,
+              e.clientY
+            );
+            const targetId = targetElement?.getAttribute("data-target-id");
+            if (targetId) {
+              handleDragOver(e, targetId);
+            }
+          }}
+        >
+          {targets.map((target) => (
+            <div key={target.id} className={styles["droppable-target"]}>
+              {target.content}
+              <div
+                className={`pointer ${styles["matched-option"]} ${
+                  target.isDraggingOver ? styles["drag-over"] : ""
+                } ${formatNo(target.no) ? styles["focused"] : ""}`}
+                onDragOver={(e) => {
+                  const targetElement = document.elementFromPoint(
+                    e.clientX,
+                    e.clientY
+                  );
+                  const targetId =
+                    targetElement?.getAttribute("data-target-id");
+                  if (targetId) {
+                    handleDragOver(e, targetId);
                   }
-                  onDragEnd={(e) => handleDragEnd(e, target)}
-                >
-                  {target.matchedOption.label}.{target.matchedOption.content}
-                </div>
-              )}
-              {!target.matchedOption && target.no}
+                }}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onClick={() => handleClick(target.no)}
+                data-target-id={target.id}
+                data-droppable-target={true}
+              >
+                {target.matchedOption && (
+                  <div
+                    className={styles["draggable-option"]}
+                    data-option-id={target.matchedOption!.id}
+                    ref={dragItem}
+                    draggable
+                    onDragStart={(e) =>
+                      handleDragStart(e, target.matchedOption!.id)
+                    }
+                    onDragEnd={(e) => handleDragEnd(e, target)}
+                  >
+                    {target.matchedOption.label}.{target.matchedOption.content}
+                  </div>
+                )}
+                {!target.matchedOption && target.no}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       <div className={type === "reading" ? styles["options-container"] : ""}>
         {options.map((option) => (
           <div

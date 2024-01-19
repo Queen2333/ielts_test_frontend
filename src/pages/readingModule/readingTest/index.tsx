@@ -284,6 +284,19 @@ const questionModule: any[] = [
   {
     part: "Part 3",
     partNumber: "27-40",
+    article: `<h3 style="text-align: center; font-weight: bold">A Brief History of Tea</h3><br>
+    A【blank】<br>
+    The story of tea began in ancient China over 5,000 years ago. According to legend, the Emperor Shen Nung was a skilled ruler, creative scientist and patron of the arts. His far-sighted edicts required, among other things, that all drinking water be boiled as a hygienic precaution. One summer day while visiting a distant region of his realm, he and the court stopped to rest. In accordance with his ruling, the servants began to boil water for the court to drink. Dried leaves from a nearby bush fell into the boiling water, and as the leaves infused the water turned brown. As a scientist, the Emperor was intrigued by the new liquid, drank some, and found it very refreshing. And so, according to legend, tea was created.<br>
+    <br>
+    B【blank】<br>
+    Tea consumption spread throughout Chinese culture, reaching into every aspect of the society. The first definitive book was written on tea - a book clearly reflecting Zen Buddhist philosophy - 1,200 years ago. The first tea seeds were brought to Japan by a returning Buddhist priest, who had seen the value of tea in enhancing meditation in China. As a result, he is known as the "Father of Tea" in Japan. Because of this early association, tea in Japan has always been linked with Zen Buddhism. Tea received the Japanese Emperor's support almost instantly and spread rapidly from the royal court and monasteries to other sections of society.<br>
+    <br>
+    C【blank】<br>
+    Tea was elevated to an art form in the Japanese tea ceremony, in which supreme importance is given to making tea in the most perfect, most polite, most graceful, most charming manner possible. Such a purity of expression prompted the creation of a particular form of architecture for 'tea house', duplicating the simplicity of a forest cottage. The cultural/artistic hostesses of Japan, the geishas, began to specialize in the presentation of the tea ceremony. However, as more and more people became involved in the excitement surrounding tea, the purity of the original concept was lost, and for a period the tea ceremony became corrupted, boisterous and highly embellished. Efforts were then made to return to the earlier simplicity, with the result that, in the 15th and 16th centuries, tea was viewed as the ultimate gift. Even warlords paused for tea before battles.<br>
+    <br>
+    D【blank】<br>
+    While tea was at this high level of development in parts of Asia, information concerning the then unknown beverage began to filter back to Europe. Earlier traders had mentioned it, but were unclear as to whether tea should be eaten or drunk. The first European to personally encounter tea and write about it was Portuguese - Portugal, with her technologically advanced navy, had been successful in gaining the first right of trade with China.<br>
+    `,
     type_list: [
       {
         type: "choice",
@@ -336,23 +349,44 @@ const questionModule: any[] = [
         ],
       },
       {
-        type: "multi_choice",
+        type: "heading",
+        title: `Reading Passage 1 has eight paragraphs, A-H.<br>
+        Choose the correct heading, for each paragraph A-H, and move it into the gap.<br>
+        <span style="font-weight: bold">List of Headings</span>`,
+        options: [
+          { label: "A", content: "flower", id: "1223" },
+          { label: "B", content: "grass", id: "1244" },
+          { label: "C", content: "glass", id: "1255" },
+          { label: "D", content: "tree", id: "1266" },
+          { label: "E", content: "leave", id: "1277" },
+        ],
         question_list: [
           {
             id: 27,
-            no: "31-33",
-            answer_count: 3,
-            question:
-              "Which THREE things do Phil and Stella still have to decide on?",
-            answer: [],
-            options: [
-              { label: "A", text: "how to analyse their results" },
-              { label: "B", text: "their methods of presentation" },
-              { label: "C", text: "the design of their questionnaire" },
-              { label: "D", text: "the location of their survey" },
-              { label: "E", text: "weather variables to be measured" },
-            ],
+            no: "31",
+            paragraph: "A",
+            matchedOption: null,
+            isDraggingOver: false,
           },
+          {
+            id: 28,
+            no: "32",
+            paragraph: "B",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 29,
+            no: "33",
+            paragraph: "C",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+        ],
+      },
+      {
+        type: "multi_choice",
+        question_list: [
           {
             id: 28,
             no: "34-36",
@@ -569,7 +603,7 @@ const ReadingTest: React.FC = () => {
     const typeIndex = findTypeIndex(targetPart, _questionIndex);
 
     setCurrentFocus({
-      type: "matching",
+      type: currentFocus.type,
       partIndex: part,
       typeIndex,
       questionIndex: _questionIndex,
@@ -866,33 +900,19 @@ const ReadingTest: React.FC = () => {
                       />
                     </div>
                   )}
-                  {item.type === "map" && (
+                  {item.type === "heading" && (
                     <div>
-                      <img src={item.picture} alt="" className="mb-20" />
-                      <div className="lh-3rem mb-30">
-                        {item.question_list.map((i: any, idx: number) => (
-                          <div key={idx} className="flex-alc">
-                            <div className="mr-5">
-                              {i.no}. {i.content}
-                            </div>
-                            <Input
-                              ref={
-                                inputRefs[part][
-                                  formatNo(item.question_list[idx].no)
-                                ]
-                              }
-                              type="text"
-                              className={styles.input_style}
-                              value={item.question_list[idx].answer}
-                              placeholder={item.question_list[idx].no}
-                              onChange={(e) =>
-                                changeChoice(e, index, idx, item.type)
-                              }
-                              onFocus={() => focusQues(item.type, index, i.no)}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
+                      <DragNDrop
+                        type="heading"
+                        nb={false}
+                        optionList={item.options}
+                        targetList={item.question_list}
+                        currentFocus={currentFocus}
+                        readingQuestionNumber={readingQuestionNumber}
+                        dropEnd={dropEnd}
+                        clickTarget={clickTarget}
+                      />
                     </div>
                   )}
                 </div>
