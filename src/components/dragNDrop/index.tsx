@@ -189,7 +189,7 @@ const DragDropComponent: React.FC<dragProps> = ({
 
   const formatNo = (no: string) => {
     const length =
-      type === "reading"
+      type !== "listening"
         ? readingQuestionNumber?.[currentFocus.partIndex].children.length
         : 10;
     return (
@@ -279,7 +279,13 @@ const DragDropComponent: React.FC<dragProps> = ({
           ))}
         </div>
       )}
-      <div className={type === "reading" ? styles["options-container"] : ""}>
+      <div
+        className={
+          type === "reading"
+            ? styles["options-container"]
+            : styles["heading-list"]
+        }
+      >
         {options.map((option) => (
           <div
             key={option.id}

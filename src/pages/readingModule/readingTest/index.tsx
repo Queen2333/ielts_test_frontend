@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import ReactDOMServer from "react-dom/server";
 import styles from "./styles.module.less";
 import rangy from "rangy";
 import "rangy/lib/rangy-classapplier";
@@ -10,6 +11,7 @@ import { Card, Input, Radio, Space, Button, Checkbox } from "antd";
 import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
 import DragNDrop from "../../../components/dragNDrop";
+import DropTarget from "../../../components/dropTarget";
 
 const questionModule: any[] = [
   {
@@ -157,6 +159,7 @@ const questionModule: any[] = [
   {
     part: "Part 2",
     partNumber: "14-26",
+    article: "111",
     type_list: [
       {
         type: "matching",
@@ -669,6 +672,43 @@ const ReadingTest: React.FC = () => {
       currentFocus.questionIndex === formatNo(no)
     );
   };
+
+  const generateInputComponents = (data: any) => {
+    data.type_list.forEach((typeItem: any) => {
+      if (typeItem.type === "heading") {
+        typeItem.question_list.forEach((question: any) => {
+          const paragraphText = data.article.match(
+            new RegExp(`${question.paragraph}【blank】`)
+          );
+          if (paragraphText) {
+            // 提取【blank】前的一个字母
+            const blankLetter = paragraphText[0].charAt(
+              paragraphText.index - 1
+            );
+            const dropTargetElement = (
+              <DropTarget
+                targetItem={question}
+                currentFocus={currentFocus}
+                readingQuestionNumber={readingQuestionNumber}
+                dropEnd={dropEnd}
+                clickTarget={clickTarget}
+              />
+            );
+            const dropTargetHTML =
+              ReactDOMServer.renderToString(dropTargetElement);
+            // 替换【blank】为<Input/>组件
+            data.article = data.article.replace(
+              `${question.paragraph}【blank】`,
+              dropTargetHTML
+            );
+            return data.article;
+          }
+          return question;
+        });
+      }
+    });
+    return data.article;
+  };
   return (
     <div className={styles.step_content}>
       <TestHeader type="reading" seconds={3600} />
@@ -693,7 +733,9 @@ const ReadingTest: React.FC = () => {
             {/* 文章内容 start*/}
             <div
               className={`overflow_auto ${styles.article_style}`}
-              dangerouslySetInnerHTML={{ __html: questionType[part].article }}
+              dangerouslySetInnerHTML={{
+                __html: generateInputComponents(questionType[part]),
+              }}
             ></div>
             {/* 文章内容 end*/}
             {/* 题目 start */}
