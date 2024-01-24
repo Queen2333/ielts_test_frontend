@@ -29,6 +29,7 @@ interface dragProps {
   readingQuestionNumber?: any[];
   dropEnd: (targets: Target[]) => void;
   clickTarget: (no: string) => void;
+  dragStart?: (e: React.DragEvent, id: string) => void;
 }
 
 const DragDropComponent: React.FC<dragProps> = ({
@@ -40,6 +41,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   readingQuestionNumber,
   dropEnd,
   clickTarget,
+  dragStart,
 }) => {
   const [options, setOptions] = useState<Option[]>(optionList);
 
@@ -51,6 +53,7 @@ const DragDropComponent: React.FC<dragProps> = ({
     dragItem.current = e.currentTarget as HTMLDivElement;
     e.dataTransfer.setData("text/plain", id);
     e.dataTransfer.effectAllowed = "move";
+    dragStart && dragStart(e, id);
   };
 
   // option触发的结束事件

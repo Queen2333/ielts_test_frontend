@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.less";
 
 interface Option {
@@ -17,6 +17,7 @@ interface Target {
 
 interface dragProps {
   targetItem: Target;
+  optionList: Option[];
   currentFocus: {
     type: string;
     partIndex: number;
@@ -24,20 +25,31 @@ interface dragProps {
     questionIndex: number;
   };
   readingQuestionNumber?: any[];
-  dropEnd: (targets: Target[]) => void;
+  startPoint: {
+    e: React.DragEvent;
+    id: string;
+  };
+  dropEnd: (targets: Target) => void;
   clickTarget: (no: string) => void;
 }
 
 const DropTargetComponent: React.FC<dragProps> = ({
   targetItem,
+  optionList,
   currentFocus,
   readingQuestionNumber,
+  startPoint,
   dropEnd,
   clickTarget,
 }) => {
   const [target, setTarget] = useState<Target>(targetItem);
 
   const dragItem = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    console.log(startPoint, "startPoint");
+    // handleDragStart(startPoint.e, startPoint.id);
+  }, [startPoint]);
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     dragItem.current = e.currentTarget as HTMLDivElement;
@@ -52,23 +64,6 @@ const DropTargetComponent: React.FC<dragProps> = ({
 
     if (!target.isDraggingOver) return;
     const draggedItemId = target.matchedOption?.id;
-
-    // if (dragItem.current) {
-    //   // 将 option 放回原来的位置
-    //   const draggedOption = optionList.find(
-    //     (option) => String(option.id) === String(draggedItemId)
-    //   );
-    //   if (draggedOption) {
-    //     const originalIndex = optionList.indexOf(draggedOption);
-
-    //     // 在原始的位置插入被拖拽项
-    //     setOptions((prevOptions) => [
-    //       ...prevOptions.slice(0, originalIndex),
-    //       draggedOption,
-    //       ...prevOptions.slice(originalIndex),
-    //     ]);
-    //   }
-    // }
 
     // 更新 targets，确保 matchedOption 设置为 null，isDraggingOver 设置为 false
     const updatedTargets = target.map((item: any) => ({
@@ -86,6 +81,7 @@ const DropTargetComponent: React.FC<dragProps> = ({
   };
 
   const handleDragOver = (e: React.DragEvent, targetId: string) => {
+    console.log("over");
     e.preventDefault();
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
@@ -106,6 +102,32 @@ const DropTargetComponent: React.FC<dragProps> = ({
       // 例如，添加拖拽进入时的样式
       // e.currentTarget.classList.add(styles["drag-enter"]); // 请替换为你的实际样式类名
     }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    const draggedItemId = e.dataTransfer.getData("text/plain");
+    console.log(e, "drop");
+
+    const draggedOption = optionList.find(
+      (option) => String(option.id) === String(draggedItemId)
+    );
+    if (draggedOption) {
+      //  更新在外面的选项
+
+      // 更新target的状态
+
+      if (String(target.id) === String(targetId)) {
+        target.matchedOption = draggedOption;
+        target.isDraggingOver = false;
+      } else if (String(target.matchedOption?.id) === String(draggedItemId)) {
+        target.matchedOption = null;
+        target.isDraggingOver = false;
+      }
+      setTarget(target);
+      dropEnd(target);
+    }
+    dragItem.current = null;
   };
 
   const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (e) => {
@@ -137,7 +159,26 @@ const DropTargetComponent: React.FC<dragProps> = ({
   };
 
   return (
-    <div className={styles["droppable-target"]}>
+    <div
+      className={styles["droppable-target"]}
+      onDrop={(e) => {
+        const targetElement = document.elementFromPoint(e.clientX, e.clientY);
+
+        if (targetElement) {
+          const targetId = targetElement.getAttribute("data-target-id");
+          if (targetId) {
+            handleDrop(e, targetId);
+          }
+        }
+      }}
+      onDragOver={(e) => {
+        const targetElement = document.elementFromPoint(e.clientX, e.clientY);
+        const targetId = targetElement?.getAttribute("data-target-id");
+        if (targetId) {
+          handleDragOver(e, targetId);
+        }
+      }}
+    >
       {target.content}
       <div
         className={`pointer ${styles["matched-option"]} ${
