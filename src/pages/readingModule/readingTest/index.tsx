@@ -434,7 +434,7 @@ const ReadingTest: React.FC = () => {
   const [highlighter, setHighlighter] = useState<any>(null);
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selection, setSelection] = useState<any>(null);
-  const [startPoint, setStartPoint] = useState<any>(null);
+  const [startPoint, setStartPoint] = useState<any>({ e: null, id: "" });
   const [currentFocus, setCurrentFocus] = useState({
     type: "choice",
     partIndex: 0,
@@ -680,10 +680,12 @@ const ReadingTest: React.FC = () => {
 
   const dragStart = (e: React.DragEvent, id: string) => {
     setStartPoint({ e, id });
-    console.log(e, id, "start");
+    console.log(startPoint, "start1");
   };
 
   const generateInputComponents = (data: any) => {
+    console.log(startPoint, "start2");
+
     data.type_list.forEach((typeItem: any) => {
       if (typeItem.type === "heading") {
         typeItem.question_list.forEach((question: any) => {

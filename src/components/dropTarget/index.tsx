@@ -26,7 +26,7 @@ interface dragProps {
   };
   readingQuestionNumber?: any[];
   startPoint: {
-    e: React.DragEvent;
+    e: React.DragEvent | null;
     id: string;
   };
   dropEnd: (targets: Target) => void;
