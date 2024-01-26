@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import ReactDOM, { createPortal } from "react-dom";
 import ReactDOMServer from "react-dom/server";
 import styles from "./styles.module.less";
 import rangy from "rangy";
@@ -450,6 +451,7 @@ const ReadingTest: React.FC = () => {
       )
     )
   );
+  const containerRef = useRef(null);
 
   useEffect(() => {
     rangy.init();
@@ -697,7 +699,9 @@ const ReadingTest: React.FC = () => {
             const blankLetter = paragraphText[0].charAt(
               paragraphText.index - 1
             );
-            const dropTargetElement = (
+
+            // 渲染 React 组件到容器
+            const dropTargetHtml = ReactDOMServer.renderToString(
               <DropTarget
                 targetItem={question}
                 optionList={typeItem.options}
@@ -708,14 +712,14 @@ const ReadingTest: React.FC = () => {
                 clickTarget={clickTarget}
               />
             );
-            const dropTargetHTML =
-              ReactDOMServer.renderToString(dropTargetElement);
-            // 替换【blank】为<Input/>组件
+
+            // 替换【blank】为容器中的内容
             data.article = data.article.replace(
               `${question.paragraph}【blank】`,
-              dropTargetHTML
+              dropTargetHtml
             );
-            return data.article;
+
+            return { __html: data.article };
           }
           return question;
         });
@@ -746,6 +750,7 @@ const ReadingTest: React.FC = () => {
           <div className="flex-jcb" onMouseUp={handleSelect}>
             {/* 文章内容 start*/}
             <div
+              ref={containerRef}
               className={`overflow_auto ${styles.article_style}`}
               dangerouslySetInnerHTML={{
                 __html: generateInputComponents(questionType[part]),

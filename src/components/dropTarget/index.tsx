@@ -43,8 +43,21 @@ const DropTargetComponent: React.FC<dragProps> = ({
   clickTarget,
 }) => {
   const [target, setTarget] = useState<Target>(targetItem);
-
+  const dropTargetRef = useRef(null);
   const dragItem = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // 在这里处理你的副作用
+    console.log("DropTarget mounted");
+    // ...
+
+    // 清理工作
+    return () => {
+      // 在组件卸载时执行
+      console.log("DropTarget unmounted");
+      // ...
+    };
+  }, []); // 空数组表示只在组件挂载时执行
 
   useEffect(() => {
     console.log(startPoint, "startPoint");
@@ -181,6 +194,7 @@ const DropTargetComponent: React.FC<dragProps> = ({
     >
       {target.content}
       <div
+        ref={dropTargetRef}
         className={`pointer ${styles["matched-option"]} ${
           target.isDraggingOver ? styles["drag-over"] : ""
         } ${formatNo(target.no) ? styles["focused"] : ""}`}
