@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import ReactDOM, { createPortal } from "react-dom";
+import { createRoot } from "react-dom/client";
 import ReactDOMServer from "react-dom/server";
 import styles from "./styles.module.less";
 import rangy from "rangy";
@@ -295,7 +296,7 @@ const questionModule: any[] = [
     B【blank】<br>
     Tea consumption spread throughout Chinese culture, reaching into every aspect of the society. The first definitive book was written on tea - a book clearly reflecting Zen Buddhist philosophy - 1,200 years ago. The first tea seeds were brought to Japan by a returning Buddhist priest, who had seen the value of tea in enhancing meditation in China. As a result, he is known as the "Father of Tea" in Japan. Because of this early association, tea in Japan has always been linked with Zen Buddhism. Tea received the Japanese Emperor's support almost instantly and spread rapidly from the royal court and monasteries to other sections of society.<br>
     <br>
-    C【blank】<br>
+    C<br>
     Tea was elevated to an art form in the Japanese tea ceremony, in which supreme importance is given to making tea in the most perfect, most polite, most graceful, most charming manner possible. Such a purity of expression prompted the creation of a particular form of architecture for 'tea house', duplicating the simplicity of a forest cottage. The cultural/artistic hostesses of Japan, the geishas, began to specialize in the presentation of the tea ceremony. However, as more and more people became involved in the excitement surrounding tea, the purity of the original concept was lost, and for a period the tea ceremony became corrupted, boisterous and highly embellished. Efforts were then made to return to the earlier simplicity, with the result that, in the 15th and 16th centuries, tea was viewed as the ultimate gift. Even warlords paused for tea before battles.<br>
     <br>
     D【blank】<br>
@@ -382,7 +383,7 @@ const questionModule: any[] = [
           {
             id: 29,
             no: "33",
-            paragraph: "C",
+            paragraph: "D",
             matchedOption: null,
             isDraggingOver: false,
           },
@@ -426,8 +427,11 @@ const questionModule: any[] = [
     ],
   },
 ];
+
 const ReadingTest: React.FC = () => {
   // const location = useLocation();
+  const divEl = document.getElementById("article-content");
+  const [headingItem, setHeadingItem] = useState<any>(null);
   const [part, setPart] = useState(0);
   const [questionType, setQuestionType] = useState(questionModule);
   const [mousePosition, setMousePosition] = useState([0, 0]);
@@ -451,7 +455,6 @@ const ReadingTest: React.FC = () => {
       )
     )
   );
-  const containerRef = useRef(null);
 
   useEffect(() => {
     rangy.init();
@@ -476,7 +479,60 @@ const ReadingTest: React.FC = () => {
     //   // 清除事件监听器
     //   window.removeEventListener("beforeunload", handleBeforeUnload);
     // };
+    // 获取容器元素，并更新 ref
+    setHeadingItem(
+      questionType[part].type_list.find((item: any) => item.type === "heading")
+    );
   }, []);
+
+  useEffect(() => {
+    console.log(part, headingItem);
+    setHeadingItem(
+      questionType[part].type_list.find((item: any) => item.type === "heading")
+    );
+  }, [part]);
+
+  const generateInputComponents = (data: any) => {
+    console.log(startPoint, "start2");
+    const elements = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(questionType[part].article, "text/html");
+
+    let processedString = questionType[part].article;
+    data.question_list.forEach((question: any) => {
+      const regex = new RegExp(`${question.paragraph}【blank】`, "g");
+
+      // 使用 replace 方法进行替换
+      processedString = processedString.replace(regex, (match) => `¥${match}¥`);
+
+      const paragraphText = questionType[part].article.match(
+        new RegExp(`${question.paragraph}【blank】`)
+      );
+      // if (paragraphText) {
+      //   // 提取【blank】前的一个字母
+      //   // const blankLetter = paragraphText[0].charAt(paragraphText.index - 1);
+
+      //   // 渲染 React 组件到容器
+      //   const dropTargetHtml = (
+      //     <React.Fragment key={question.paragraph}>
+      //       <DropTarget
+      //         key={question.id}
+      //         targetItem={question}
+      //         optionList={data.options}
+      //         currentFocus={currentFocus}
+      //         readingQuestionNumber={readingQuestionNumber}
+      //         startPoint={startPoint}
+      //         dropEnd={dropEndTarget}
+      //         clickTarget={clickTarget}
+      //       />
+      //     </React.Fragment>
+      //   );
+      // }
+    });
+    console.log(processedString, "processedString");
+
+    return questionType[part].article;
+  };
 
   const findTypeIndex = (targetPart: any, question: number) => {
     let typeIndex = 0;
@@ -685,48 +741,6 @@ const ReadingTest: React.FC = () => {
     console.log(startPoint, "start1");
   };
 
-  const generateInputComponents = (data: any) => {
-    console.log(startPoint, "start2");
-
-    data.type_list.forEach((typeItem: any) => {
-      if (typeItem.type === "heading") {
-        typeItem.question_list.forEach((question: any) => {
-          const paragraphText = data.article.match(
-            new RegExp(`${question.paragraph}【blank】`)
-          );
-          if (paragraphText) {
-            // 提取【blank】前的一个字母
-            const blankLetter = paragraphText[0].charAt(
-              paragraphText.index - 1
-            );
-
-            // 渲染 React 组件到容器
-            const dropTargetHtml = ReactDOMServer.renderToString(
-              <DropTarget
-                targetItem={question}
-                optionList={typeItem.options}
-                currentFocus={currentFocus}
-                readingQuestionNumber={readingQuestionNumber}
-                startPoint={startPoint}
-                dropEnd={dropEndTarget}
-                clickTarget={clickTarget}
-              />
-            );
-
-            // 替换【blank】为容器中的内容
-            data.article = data.article.replace(
-              `${question.paragraph}【blank】`,
-              dropTargetHtml
-            );
-
-            return { __html: data.article };
-          }
-          return question;
-        });
-      }
-    });
-    return data.article;
-  };
   return (
     <div className={styles.step_content}>
       <TestHeader type="reading" seconds={3600} />
@@ -750,13 +764,20 @@ const ReadingTest: React.FC = () => {
           <div className="flex-jcb" onMouseUp={handleSelect}>
             {/* 文章内容 start*/}
             <div
-              ref={containerRef}
+              id="article-content"
               className={`overflow_auto ${styles.article_style}`}
-              dangerouslySetInnerHTML={{
-                __html: generateInputComponents(questionType[part]),
-              }}
-            ></div>
-            {/* 文章内容 end*/}
+            >
+              {headingItem ? (
+                <div>{generateInputComponents(headingItem)}</div>
+              ) : (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: questionType[part].article,
+                  }}
+                ></div>
+              )}
+            </div>
+            ,{/* 文章内容 end*/}
             {/* 题目 start */}
             <div
               style={{
