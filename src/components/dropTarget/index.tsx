@@ -31,6 +31,7 @@ interface dragProps {
   };
   dropEnd: (targets: Target) => void;
   clickTarget: (no: string) => void;
+  updateOptions: (option: any) => void;
 }
 
 const DropTargetComponent: React.FC<dragProps> = ({
@@ -41,27 +42,15 @@ const DropTargetComponent: React.FC<dragProps> = ({
   startPoint,
   dropEnd,
   clickTarget,
+  updateOptions,
 }) => {
   const [target, setTarget] = useState<Target>(targetItem);
   const dropTargetRef = useRef(null);
   const dragItem = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // 在这里处理你的副作用
-    console.log("DropTarget mounted");
-    // ...
-
-    // 清理工作
-    return () => {
-      // 在组件卸载时执行
-      console.log("DropTarget unmounted");
-      // ...
-    };
-  }, []); // 空数组表示只在组件挂载时执行
-
-  useEffect(() => {
     console.log(startPoint, "startPoint");
-    // handleDragStart(startPoint.e, startPoint.id);
+    if (startPoint.e) handleDragStart(startPoint.e, startPoint.id);
   }, [startPoint]);
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
@@ -94,7 +83,6 @@ const DropTargetComponent: React.FC<dragProps> = ({
   };
 
   const handleDragOver = (e: React.DragEvent, targetId: string) => {
-    console.log("over");
     e.preventDefault();
     const targetElement = document.elementFromPoint(e.clientX, e.clientY);
     const isDraggingOver =
@@ -127,7 +115,7 @@ const DropTargetComponent: React.FC<dragProps> = ({
     );
     if (draggedOption) {
       //  更新在外面的选项
-
+      updateOptions(draggedOption);
       // 更新target的状态
 
       if (String(target.id) === String(targetId)) {

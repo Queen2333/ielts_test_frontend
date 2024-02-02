@@ -493,45 +493,23 @@ const ReadingTest: React.FC = () => {
   }, [part]);
 
   const generateInputComponents = (data: any) => {
-    console.log(startPoint, "start2");
-    const elements = [];
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(questionType[part].article, "text/html");
-
     let processedString = questionType[part].article;
     data.question_list.forEach((question: any) => {
       const regex = new RegExp(`${question.paragraph}【blank】`, "g");
 
       // 使用 replace 方法进行替换
-      processedString = processedString.replace(regex, (match) => `¥${match}¥`);
-
-      const paragraphText = questionType[part].article.match(
-        new RegExp(`${question.paragraph}【blank】`)
+      processedString = processedString.replace(
+        regex,
+        (match: any) => `¥${match}， ${JSON.stringify(question)}¥`
       );
-      // if (paragraphText) {
-      //   // 提取【blank】前的一个字母
-      //   // const blankLetter = paragraphText[0].charAt(paragraphText.index - 1);
-
-      //   // 渲染 React 组件到容器
-      //   const dropTargetHtml = (
-      //     <React.Fragment key={question.paragraph}>
-      //       <DropTarget
-      //         key={question.id}
-      //         targetItem={question}
-      //         optionList={data.options}
-      //         currentFocus={currentFocus}
-      //         readingQuestionNumber={readingQuestionNumber}
-      //         startPoint={startPoint}
-      //         dropEnd={dropEndTarget}
-      //         clickTarget={clickTarget}
-      //       />
-      //     </React.Fragment>
-      //   );
-      // }
     });
-    console.log(processedString, "processedString");
+    const processedArr = processedString.split("¥");
 
-    return questionType[part].article;
+    return processedArr;
+  };
+
+  const formatQuestion = (questionStr: string) => {
+    return JSON.parse(questionStr.split("，")[1]);
   };
 
   const findTypeIndex = (targetPart: any, question: number) => {
@@ -658,6 +636,19 @@ const ReadingTest: React.FC = () => {
     console.log(targets, "targets");
   };
 
+  // heading更新选项
+  const updateOptions = (option: any) => {
+    console.log(option, "option update");
+    const index = questionType[part].type_list.findIndex(
+      (item: any) => item.type === "heading"
+    );
+
+    const updatedOptions = questionType[part].type_list[index].options.filter(
+      (item: any) => item.id !== option.id
+    );
+    questionType[part].options = updatedOptions;
+    setQuestionType(questionType);
+  };
   // 匹配题focus
   const clickTarget = (no: string) => {
     const targetPart = questionType[part];
@@ -738,7 +729,6 @@ const ReadingTest: React.FC = () => {
 
   const dragStart = (e: React.DragEvent, id: string) => {
     setStartPoint({ e, id });
-    console.log(startPoint, "start1");
   };
 
   return (
@@ -768,7 +758,40 @@ const ReadingTest: React.FC = () => {
               className={`overflow_auto ${styles.article_style}`}
             >
               {headingItem ? (
-                <div>{generateInputComponents(headingItem)}</div>
+                <div>
+                  {generateInputComponents(headingItem).map(
+                    (item: string, index: number) => {
+                      if (item.includes("【blank】")) {
+                        return (
+                          <div key={index} className="flex-alc">
+                            <span className="fwb">
+                              {formatQuestion(item).paragraph}
+                            </span>
+                            <DropTarget
+                              targetItem={formatQuestion(item)}
+                              optionList={headingItem.options}
+                              currentFocus={currentFocus}
+                              readingQuestionNumber={readingQuestionNumber}
+                              startPoint={startPoint}
+                              dropEnd={dropEndTarget}
+                              clickTarget={clickTarget}
+                              updateOptions={updateOptions}
+                            />
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            key={index}
+                            dangerouslySetInnerHTML={{
+                              __html: item,
+                            }}
+                          ></div>
+                        );
+                      }
+                    }
+                  )}
+                </div>
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
@@ -993,7 +1016,6 @@ const ReadingTest: React.FC = () => {
                         currentFocus={currentFocus}
                         readingQuestionNumber={readingQuestionNumber}
                         dropEnd={dropEnd}
-                        clickTarget={clickTarget}
                         dragStart={dragStart}
                       />
                     </div>

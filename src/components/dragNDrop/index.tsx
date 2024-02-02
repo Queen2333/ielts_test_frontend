@@ -28,7 +28,7 @@ interface dragProps {
   nb: boolean;
   readingQuestionNumber?: any[];
   dropEnd: (targets: Target[]) => void;
-  clickTarget: (no: string) => void;
+  clickTarget?: (no: string) => void;
   dragStart?: (e: React.DragEvent, id: string) => void;
 }
 
