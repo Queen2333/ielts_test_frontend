@@ -636,19 +636,6 @@ const ReadingTest: React.FC = () => {
     console.log(targets, "targets");
   };
 
-  // heading更新选项
-  const updateOptions = (option: any) => {
-    console.log(option, "option update");
-    const index = questionType[part].type_list.findIndex(
-      (item: any) => item.type === "heading"
-    );
-
-    const updatedOptions = questionType[part].type_list[index].options.filter(
-      (item: any) => item.id !== option.id
-    );
-    questionType[part].options = updatedOptions;
-    setQuestionType(questionType);
-  };
   // 匹配题focus
   const clickTarget = (no: string) => {
     const targetPart = questionType[part];
@@ -723,8 +710,21 @@ const ReadingTest: React.FC = () => {
     );
   };
 
-  const dropEndTarget = (target: any) => {
-    console.log(target, "drop");
+  // heading更新选项
+  const dropEndTarget = (target: any, option: any) => {
+    console.log(target, option, "option update");
+    const index = questionType[part].type_list.findIndex(
+      (item: any) => item.type === "heading"
+    );
+
+    const updatedOptions = questionType[part].type_list[index].options.filter(
+      (item: any) => item.id !== option.id
+    );
+    questionType[part].type_list[index].options = updatedOptions;
+    setQuestionType(questionType);
+    headingItem.options = updatedOptions;
+    setHeadingItem(headingItem);
+    console.log(headingItem, "HeadingItem");
   };
 
   const dragStart = (e: React.DragEvent, id: string) => {
@@ -775,7 +775,6 @@ const ReadingTest: React.FC = () => {
                               startPoint={startPoint}
                               dropEnd={dropEndTarget}
                               clickTarget={clickTarget}
-                              updateOptions={updateOptions}
                             />
                           </div>
                         );

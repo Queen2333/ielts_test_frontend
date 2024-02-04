@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.less";
 
 interface Option {
@@ -56,6 +56,10 @@ const DragDropComponent: React.FC<dragProps> = ({
     dragStart && dragStart(e, id);
   };
 
+  useEffect(() => {
+    console.log(optionList, "optionList");
+    setOptions(optionList);
+  }, [optionList]);
   // option触发的结束事件
   const handleDragEnd = (e: React.DragEvent, target: any) => {
     // const targetElement = document.elementFromPoint(e.clientX, e.clientY);
@@ -187,7 +191,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   };
 
   const handleClick = (no: string) => {
-    clickTarget(no);
+    clickTarget && clickTarget(no);
   };
 
   const formatNo = (no: string) => {

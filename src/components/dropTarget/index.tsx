@@ -29,9 +29,9 @@ interface dragProps {
     e: React.DragEvent | null;
     id: string;
   };
-  dropEnd: (targets: Target) => void;
+  dropEnd: (targets: Target, option?: Option) => void;
   clickTarget: (no: string) => void;
-  updateOptions: (option: any) => void;
+  // updateOptions: (option: any) => void;
 }
 
 const DropTargetComponent: React.FC<dragProps> = ({
@@ -42,14 +42,13 @@ const DropTargetComponent: React.FC<dragProps> = ({
   startPoint,
   dropEnd,
   clickTarget,
-  updateOptions,
+  // updateOptions,
 }) => {
   const [target, setTarget] = useState<Target>(targetItem);
   const dropTargetRef = useRef(null);
   const dragItem = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log(startPoint, "startPoint");
     if (startPoint.e) handleDragStart(startPoint.e, startPoint.id);
   }, [startPoint]);
 
@@ -114,8 +113,6 @@ const DropTargetComponent: React.FC<dragProps> = ({
       (option) => String(option.id) === String(draggedItemId)
     );
     if (draggedOption) {
-      //  更新在外面的选项
-      updateOptions(draggedOption);
       // 更新target的状态
 
       if (String(target.id) === String(targetId)) {
@@ -126,7 +123,8 @@ const DropTargetComponent: React.FC<dragProps> = ({
         target.isDraggingOver = false;
       }
       setTarget(target);
-      dropEnd(target);
+      //  更新在外面的选项
+      dropEnd(target, draggedOption);
     }
     dragItem.current = null;
   };
