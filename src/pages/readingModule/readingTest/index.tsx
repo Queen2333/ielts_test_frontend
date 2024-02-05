@@ -721,10 +721,10 @@ const ReadingTest: React.FC = () => {
       (item: any) => item.id !== option.id
     );
     questionType[part].type_list[index].options = updatedOptions;
-    setQuestionType(questionType);
+    setQuestionType([...questionType]);
+
     headingItem.options = updatedOptions;
     setHeadingItem(headingItem);
-    console.log(headingItem, "HeadingItem");
   };
 
   const dragStart = (e: React.DragEvent, id: string) => {
