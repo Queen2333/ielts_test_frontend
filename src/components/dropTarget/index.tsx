@@ -66,18 +66,16 @@ const DropTargetComponent: React.FC<dragProps> = ({
     if (!target.isDraggingOver) return;
     const draggedItemId = target.matchedOption?.id;
 
-    // 更新 targets，确保 matchedOption 设置为 null，isDraggingOver 设置为 false
-    const updatedTargets = target.map((item: any) => ({
-      ...item,
-      matchedOption:
-        String(item.matchedOption?.id) === String(draggedItemId)
-          ? null
-          : item.matchedOption,
-      isDraggingOver: false,
-    }));
+    // 更新 target，确保 matchedOption 设置为 null，isDraggingOver 设置为 false
+    const updatedTarget = target;
+    updatedTarget.matchedOption =
+      String(target.matchedOption?.id) === String(draggedItemId)
+        ? null
+        : target.matchedOption;
+    updatedTarget.isDraggingOver = false;
 
-    setTarget(updatedTargets);
-    dropEnd(updatedTargets);
+    setTarget(updatedTarget);
+    dropEnd(updatedTarget);
     dragItem.current = null;
   };
 
