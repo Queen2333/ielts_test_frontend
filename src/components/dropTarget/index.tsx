@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.less";
-
+import cloneDeep from "lodash/cloneDeep";
 interface Option {
   id: string;
   label: string;
@@ -61,21 +61,18 @@ const DropTargetComponent: React.FC<dragProps> = ({
   // option触发的结束事件
   const handleDragEnd = (e: React.DragEvent, target: any) => {
     // const targetElement = document.elementFromPoint(e.clientX, e.clientY);
-    console.log(e, target, "end");
+    console.log(e, target, "end2");
 
     if (!target.isDraggingOver) return;
-    const draggedItemId = target.matchedOption?.id;
 
     // 更新 target，确保 matchedOption 设置为 null，isDraggingOver 设置为 false
-    const updatedTarget = target;
-    updatedTarget.matchedOption =
-      String(target.matchedOption?.id) === String(draggedItemId)
-        ? null
-        : target.matchedOption;
+    const updatedTarget = cloneDeep(target);
+    updatedTarget.matchedOption = null;
     updatedTarget.isDraggingOver = false;
+    console.log(target, updatedTarget, "target");
 
     setTarget(updatedTarget);
-    dropEnd(updatedTarget);
+    dropEnd(updatedTarget, target.matchedOption);
     dragItem.current = null;
   };
 
@@ -105,7 +102,7 @@ const DropTargetComponent: React.FC<dragProps> = ({
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     const draggedItemId = e.dataTransfer.getData("text/plain");
-    console.log(e, "drop");
+    console.log(e, "drop1");
 
     const draggedOption = optionList.find(
       (option) => String(option.id) === String(draggedItemId)
@@ -130,6 +127,7 @@ const DropTargetComponent: React.FC<dragProps> = ({
   const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     const targetId = e.currentTarget.getAttribute("data-target-id");
+
     if (targetId) {
       // console.log(targetId, "leave");
       if (String(target.id) === String(targetId)) {
@@ -137,7 +135,6 @@ const DropTargetComponent: React.FC<dragProps> = ({
       }
       setTarget(target);
     }
-
     // 重置样式或移除视觉效果
     // e.currentTarget.classList.remove(styles["drag-enter"]); // 请替换为你的实际样式类名
   };

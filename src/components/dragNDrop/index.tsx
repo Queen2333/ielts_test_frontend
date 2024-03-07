@@ -63,7 +63,7 @@ const DragDropComponent: React.FC<dragProps> = ({
   // option触发的结束事件
   const handleDragEnd = (e: React.DragEvent, target: any) => {
     // const targetElement = document.elementFromPoint(e.clientX, e.clientY);
-    console.log(e, target, "end");
+    console.log(e, target, "end1");
 
     if (!target.isDraggingOver) return;
     const draggedItemId = target.matchedOption?.id;
