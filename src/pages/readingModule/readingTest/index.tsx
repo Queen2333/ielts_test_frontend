@@ -440,6 +440,8 @@ const ReadingTest: React.FC = () => {
   const [selectionRange, setSelectionRange] = useState<any>(null);
   const [selection, setSelection] = useState<any>(null);
   const [startPoint, setStartPoint] = useState<any>({ e: null, id: "" });
+  const [headingOptionsOriginal, setHeadingOptionsOriginal] =
+    useState<any>(null);
   const [currentFocus, setCurrentFocus] = useState({
     type: "choice",
     partIndex: 0,
@@ -480,16 +482,20 @@ const ReadingTest: React.FC = () => {
     //   window.removeEventListener("beforeunload", handleBeforeUnload);
     // };
     // 获取容器元素，并更新 ref
-    setHeadingItem(
-      questionType[part].type_list.find((item: any) => item.type === "heading")
+    const originalHeading = questionType[part].type_list.find(
+      (item: any) => item.type === "heading"
     );
+    setHeadingItem(originalHeading);
+    setHeadingOptionsOriginal(originalHeading?.options);
   }, []);
 
   useEffect(() => {
     console.log(part, headingItem);
-    setHeadingItem(
-      questionType[part].type_list.find((item: any) => item.type === "heading")
+    const originalHeading = questionType[part].type_list.find(
+      (item: any) => item.type === "heading"
     );
+    setHeadingItem(originalHeading);
+    setHeadingOptionsOriginal(originalHeading?.options);
   }, [part]);
 
   const generateInputComponents = (data: any) => {
@@ -717,13 +723,29 @@ const ReadingTest: React.FC = () => {
       (item: any) => item.type === "heading"
     );
 
-    const updatedOptions = questionType[part].type_list[index].options.filter(
-      (item: any) => item.id !== option.id
-    );
-    questionType[part].type_list[index].options = updatedOptions;
-    setQuestionType([...questionType]);
+    if (target.matchedOption) {
+      const updatedOptions = questionType[part].type_list[index].options.filter(
+        (item: any) => item.id !== option.id
+      );
+      questionType[part].type_list[index].options = updatedOptions;
+      headingItem.options = updatedOptions;
+    } else {
 
-    headingItem.options = updatedOptions;
+      const updatedOptions = headingOptionsOriginal.find(
+        (item: any) => String(item.id) === String(option.id)
+      );
+
+      const originalIndex = headingOptionsOriginal.indexOf(updatedOptions);
+
+      // 在原始的位置插入被拖拽项
+      headingItem.options = [
+        ...questionType[part].type_list[index].options.slice(0, originalIndex),
+        updatedOptions,
+        ...questionType[part].type_list[index].options.slice(originalIndex),
+      ];
+      questionType[part].type_list[index].options = headingItem.options;
+    }
+    setQuestionType([...questionType]);
     setHeadingItem(headingItem);
   };
 
