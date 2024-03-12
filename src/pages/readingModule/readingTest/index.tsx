@@ -390,37 +390,70 @@ const questionModule: any[] = [
         ],
       },
       {
-        type: "multi_choice",
+        type: "choose_word",
+        title: `Complete the notes.<br>
+          Choose words from the list below in each gap.`,
+        article_content: `The total rent: Peter £ 110 & Jim £ &#8203;【blank】&#8203;
+          Car parking: in the &#8203;【blank】&#8203;
+          A place to buy things: &#8203;【blank】&#8203;, because Jim works there.
+          The fees they should share: &#8203;【blank】&#8203; fees
+          Recent interview:
+          A company is not one entity comprised of components, but a living organism composed of cells.
+          Manjeet's motto is&#8203;【blank】&#8203;
+          The rate of staff turnover has been reduced.
+          A &#8203;【blank】&#8203;can be from any other company.
+          Grades are not used for&#8203;【blank】&#8203;
+          The complaint form known as a &#8203;【blank】&#8203;has access to all employees online.
+          The manager can receive any complaints concerning air conditioning, food quality and &#8203;【blank】&#8203;`,
+        options: [
+          { label: "A", content: "flower", id: "1400" },
+          { label: "B", content: "grass", id: "1401" },
+          { label: "C", content: "glass", id: "1402" },
+          { label: "D", content: "tree", id: "1403" },
+          { label: "E", content: "leave", id: "1404" },
+        ],
         question_list: [
           {
             id: 28,
-            no: "34-36",
-            answer_count: 3,
-            question:
-              "Which THREE things do Phil and Stella still have to decide on?",
-            answer: [],
-            options: [
-              { label: "A", text: "how to analyse their results" },
-              { label: "B", text: "their methods of presentation" },
-              { label: "C", text: "the design of their questionnaire" },
-              { label: "D", text: "the location of their survey" },
-              { label: "E", text: "weather variables to be measured" },
-            ],
+            no: "34",
+            matchedOption: null,
+            isDraggingOver: false,
           },
           {
             id: 29,
-            no: "37-40",
-            answer_count: 4,
-            question:
-              "Which THREE things do Phil and Stella still have to decide on?",
-            answer: [],
-            options: [
-              { label: "A", text: "how to analyse their results" },
-              { label: "B", text: "their methods of presentation" },
-              { label: "C", text: "the design of their questionnaire" },
-              { label: "D", text: "the location of their survey" },
-              { label: "E", text: "weather variables to be measured" },
-            ],
+            no: "35",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 30,
+            no: "36",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 31,
+            no: "37",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 32,
+            no: "38",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 33,
+            no: "39",
+            matchedOption: null,
+            isDraggingOver: false,
+          },
+          {
+            id: 34,
+            no: "40",
+            matchedOption: null,
+            isDraggingOver: false,
           },
         ],
       },
@@ -441,6 +474,8 @@ const ReadingTest: React.FC = () => {
   const [selection, setSelection] = useState<any>(null);
   const [startPoint, setStartPoint] = useState<any>({ e: null, id: "" });
   const [headingOptionsOriginal, setHeadingOptionsOriginal] =
+    useState<any>(null);
+  const [chooseWordOptionsOriginal, setChooseWordOptionsOriginal] =
     useState<any>(null);
   const [currentFocus, setCurrentFocus] = useState({
     type: "choice",
@@ -485,7 +520,11 @@ const ReadingTest: React.FC = () => {
     const originalHeading = questionType[part].type_list.find(
       (item: any) => item.type === "heading"
     );
+    const originalChooseWord = questionType[part].type_list.find(
+      (item: any) => item.type === "choose_word"
+    );
     setHeadingItem(originalHeading);
+    setChooseWordOptionsOriginal(originalChooseWord?.options);
     setHeadingOptionsOriginal(originalHeading?.options);
   }, []);
 
@@ -494,7 +533,11 @@ const ReadingTest: React.FC = () => {
     const originalHeading = questionType[part].type_list.find(
       (item: any) => item.type === "heading"
     );
+    const originalChooseWord = questionType[part].type_list.find(
+      (item: any) => item.type === "choose_word"
+    );
     setHeadingItem(originalHeading);
+    setChooseWordOptionsOriginal(originalChooseWord?.options);
     setHeadingOptionsOriginal(originalHeading?.options);
   }, [part]);
 
@@ -717,10 +760,10 @@ const ReadingTest: React.FC = () => {
   };
 
   // heading更新选项
-  const dropEndTarget = (target: any, option: any) => {
+  const dropEndTarget = (target: any, option: any, name: string) => {
     console.log(target, option, "option update");
     const index = questionType[part].type_list.findIndex(
-      (item: any) => item.type === "heading"
+      (item: any) => item.type === name
     );
 
     if (target.matchedOption) {
@@ -728,25 +771,28 @@ const ReadingTest: React.FC = () => {
         (item: any) => item.id !== option.id
       );
       questionType[part].type_list[index].options = updatedOptions;
-      headingItem.options = updatedOptions;
+      if (name === "heading") headingItem.options = updatedOptions;
     } else {
+      const updatedOptions = [...
+        name === "heading" ? headingOptionsOriginal : chooseWordOptionsOriginal,
+      ].find((item: any) => String(item.id) === String(option.id));
 
-      const updatedOptions = headingOptionsOriginal.find(
-        (item: any) => String(item.id) === String(option.id)
-      );
-
-      const originalIndex = headingOptionsOriginal.indexOf(updatedOptions);
+      const originalIndex = [...
+        name === "heading" ? headingOptionsOriginal : chooseWordOptionsOriginal,
+      ].indexOf(updatedOptions);
 
       // 在原始的位置插入被拖拽项
-      headingItem.options = [
+      questionType[part].type_list[index].options = [
         ...questionType[part].type_list[index].options.slice(0, originalIndex),
         updatedOptions,
         ...questionType[part].type_list[index].options.slice(originalIndex),
       ];
-      questionType[part].type_list[index].options = headingItem.options;
+
+      if (name === "heading")
+        headingItem.options = questionType[part].type_list[index].options;
     }
     setQuestionType([...questionType]);
-    setHeadingItem(headingItem);
+    if (name === "heading") setHeadingItem(headingItem);
   };
 
   const dragStart = (e: React.DragEvent, id: string) => {
@@ -795,7 +841,9 @@ const ReadingTest: React.FC = () => {
                               currentFocus={currentFocus}
                               readingQuestionNumber={readingQuestionNumber}
                               startPoint={startPoint}
-                              dropEnd={dropEndTarget}
+                              dropEnd={(target, option) =>
+                                dropEndTarget(target, option, "heading")
+                              }
                               clickTarget={clickTarget}
                             />
                           </div>
@@ -1029,6 +1077,41 @@ const ReadingTest: React.FC = () => {
                   {item.type === "heading" && (
                     <div>
                       <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
+                      <DragNDrop
+                        type="heading"
+                        nb={false}
+                        optionList={item.options}
+                        targetList={item.question_list}
+                        currentFocus={currentFocus}
+                        readingQuestionNumber={readingQuestionNumber}
+                        dropEnd={dropEnd}
+                        dragStart={dragStart}
+                      />
+                    </div>
+                  )}
+                  {item.type === "choose_word" && (
+                    <div className="lh-3rem mb-30">
+                      <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
+                      {item.article_content
+                        .split("【blank】")
+                        .map((i: any, idx: number) => (
+                          <span key={idx} className="flex-alc flex-wrap">
+                            <span dangerouslySetInnerHTML={{ __html: i }} />
+                            {idx < item.question_list.length && (
+                              <DropTarget
+                                targetItem={item.question_list[idx]}
+                                optionList={item.options}
+                                currentFocus={currentFocus}
+                                readingQuestionNumber={readingQuestionNumber}
+                                startPoint={startPoint}
+                                dropEnd={(target, option) =>
+                                  dropEndTarget(target, option, "choose_word")
+                                }
+                                clickTarget={clickTarget}
+                              />
+                            )}
+                          </span>
+                        ))}
                       <DragNDrop
                         type="heading"
                         nb={false}
