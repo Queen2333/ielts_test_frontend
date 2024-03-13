@@ -144,12 +144,15 @@ const DropTargetComponent: React.FC<dragProps> = ({
   };
 
   const formatNo = (no: string) => {
+    if (currentFocus.partIndex === 0)
+      return Number(no) - 1 === currentFocus.questionIndex;
     const length =
-      readingQuestionNumber?.[currentFocus.partIndex].children.length;
-    return (
-      currentFocus.partIndex * length + currentFocus.questionIndex ===
-      Number(no) - 1
-    );
+      currentFocus.partIndex > 1
+        ? readingQuestionNumber?.[1].children.length +
+          readingQuestionNumber?.[0].children.length
+        : readingQuestionNumber?.[1].children.length;
+
+    return length + currentFocus.questionIndex === Number(no) - 1;
   };
 
   return (

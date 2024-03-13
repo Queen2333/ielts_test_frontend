@@ -197,12 +197,15 @@ const DragDropComponent: React.FC<dragProps> = ({
   const formatNo = (no: string) => {
     const length =
       type !== "listening"
-        ? readingQuestionNumber?.[currentFocus.partIndex].children.length
+        ? currentFocus.partIndex > 1
+          ? readingQuestionNumber?.[1].children.length +
+            readingQuestionNumber?.[0].children.length
+          : readingQuestionNumber?.[1].children.length
         : 10;
-    return (
-      currentFocus.partIndex * length + currentFocus.questionIndex ===
-      Number(no) - 1
-    );
+    return type !== "listening"
+      ? length + currentFocus.questionIndex === Number(no) - 1
+      : currentFocus.partIndex * length + currentFocus.questionIndex ===
+          Number(no) - 1;
   };
 
   return (
