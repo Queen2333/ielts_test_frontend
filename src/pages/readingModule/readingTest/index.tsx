@@ -14,7 +14,7 @@ import { listeningQuestionNumber } from "../../common/listeningData";
 import MarkDialog from "../../../components/markDialog";
 import DragNDrop from "../../../components/dragNDrop";
 import DropTarget from "../../../components/dropTarget";
-
+import { computedLength } from "../../../utils/index";
 const questionModule: any[] = [
   {
     part: "Part 1",
@@ -671,12 +671,7 @@ const ReadingTest: React.FC = () => {
   };
 
   const formatNo = (no: string) => {
-    if (part === 0) return Number(no) - 1;
-    const length =
-      part > 1
-        ? readingQuestionNumber[part - 1].children.length +
-          readingQuestionNumber[part - 2].children.length
-        : readingQuestionNumber[part - 1].children.length;
+    const length = computedLength(part, readingQuestionNumber);
     return Number(no) - length - 1;
   };
 
@@ -773,12 +768,16 @@ const ReadingTest: React.FC = () => {
       questionType[part].type_list[index].options = updatedOptions;
       if (name === "heading") headingItem.options = updatedOptions;
     } else {
-      const updatedOptions = [...
-        name === "heading" ? headingOptionsOriginal : chooseWordOptionsOriginal,
+      const updatedOptions = [
+        ...(name === "heading"
+          ? headingOptionsOriginal
+          : chooseWordOptionsOriginal),
       ].find((item: any) => String(item.id) === String(option.id));
 
-      const originalIndex = [...
-        name === "heading" ? headingOptionsOriginal : chooseWordOptionsOriginal,
+      const originalIndex = [
+        ...(name === "heading"
+          ? headingOptionsOriginal
+          : chooseWordOptionsOriginal),
       ].indexOf(updatedOptions);
 
       // 在原始的位置插入被拖拽项

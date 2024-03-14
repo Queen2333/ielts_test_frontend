@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.less";
+import { computedLength } from "../../utils/index";
 
 interface Option {
   id: string;
@@ -44,10 +45,10 @@ const DragDropComponent: React.FC<dragProps> = ({
   dragStart,
 }) => {
   const [options, setOptions] = useState<Option[]>(optionList);
-
   const [targets, setTargets] = useState<Target[]>(targetList);
-
   const dragItem = useRef<HTMLDivElement | null>(null);
+  let startY;
+  let lastY = 0;
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     dragItem.current = e.currentTarget as HTMLDivElement;
@@ -56,6 +57,7 @@ const DragDropComponent: React.FC<dragProps> = ({
     dragStart && dragStart(e, id);
   };
 
+  const dragOptionStart = () => {};
   useEffect(() => {
     console.log(optionList, "optionList");
     setOptions(optionList);
@@ -103,6 +105,8 @@ const DragDropComponent: React.FC<dragProps> = ({
   // target框触发的结束事件
   const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
+    // 判断是否在视图内
+
     const draggedItemId = e.dataTransfer.getData("text/plain");
     // console.log(e, "drop");
 
@@ -197,15 +201,9 @@ const DragDropComponent: React.FC<dragProps> = ({
   const formatNo = (no: string) => {
     const length =
       type !== "listening"
-        ? currentFocus.partIndex > 1
-          ? readingQuestionNumber?.[1].children.length +
-            readingQuestionNumber?.[0].children.length
-          : readingQuestionNumber?.[1].children.length
-        : 10;
-    return type !== "listening"
-      ? length + currentFocus.questionIndex === Number(no) - 1
-      : currentFocus.partIndex * length + currentFocus.questionIndex ===
-          Number(no) - 1;
+        ? computedLength(currentFocus.partIndex, readingQuestionNumber)
+        : 10 * currentFocus.partIndex;
+    return length + currentFocus.questionIndex === Number(no) - 1;
   };
 
   return (
@@ -221,6 +219,7 @@ const DragDropComponent: React.FC<dragProps> = ({
       {type !== "heading" && (
         <div
           className={type === "listening" ? styles["targets-container"] : ""}
+          onDragStart={dragOptionStart}
           onDrop={(e) => {
             const targetElement = document.elementFromPoint(
               e.clientX,

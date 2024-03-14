@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.less";
 import cloneDeep from "lodash/cloneDeep";
+import { computedLength } from "../../utils/index";
 interface Option {
   id: string;
   label: string;
@@ -24,7 +25,7 @@ interface dragProps {
     typeIndex: number;
     questionIndex: number;
   };
-  readingQuestionNumber?: any[];
+  readingQuestionNumber: any[];
   startPoint: {
     e: React.DragEvent | null;
     id: string;
@@ -144,14 +145,10 @@ const DropTargetComponent: React.FC<dragProps> = ({
   };
 
   const formatNo = (no: string) => {
-    if (currentFocus.partIndex === 0)
-      return Number(no) - 1 === currentFocus.questionIndex;
-    const length =
-      currentFocus.partIndex > 1
-        ? readingQuestionNumber?.[1].children.length +
-          readingQuestionNumber?.[0].children.length
-        : readingQuestionNumber?.[1].children.length;
-
+    const length = computedLength(
+      currentFocus.partIndex,
+      readingQuestionNumber
+    );
     return length + currentFocus.questionIndex === Number(no) - 1;
   };
 
