@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import ReactDOM, { createPortal } from "react-dom";
-import { createRoot } from "react-dom/client";
-import ReactDOMServer from "react-dom/server";
 import styles from "./styles.module.less";
 import rangy from "rangy";
 import "rangy/lib/rangy-classapplier";
@@ -15,6 +12,7 @@ import MarkDialog from "../../../components/markDialog";
 import DragNDrop from "../../../components/dragNDrop";
 import DropTarget from "../../../components/dropTarget";
 import { computedLength } from "../../../utils/index";
+import MatchingTable from "../../../components/matchingTable";
 const questionModule: any[] = [
   {
     part: "Part 1",
@@ -211,6 +209,56 @@ const questionModule: any[] = [
         ],
       },
       {
+        type: "paragraph_matching",
+        title: `Which paragraph contains the following information.<br>
+        Choose the correct answer.<br>
+        <span style="font-weight: bold">NB</span> You may use any letter more than once.`,
+        question_list: [
+          {
+            id: 14,
+            no: "18",
+            content:
+              "mention of specialists who can make use of the research findings",
+            answer: "",
+          },
+          {
+            id: 15,
+            no: "19",
+            content:
+              "a reference to a potential benefit of the research findings",
+            answer: "",
+          },
+          {
+            id: 16,
+            no: "20",
+            content: "scientific support for a traditional saying",
+            answer: "",
+          },
+          {
+            id: 17,
+            no: "21",
+            content:
+              "a reference to people traditionally making plans based on plant behaviour",
+            answer: "",
+          },
+          {
+            id: 18,
+            no: "22",
+            content: "a reference to where the research has been reported",
+            answer: "",
+          },
+        ],
+        options: [
+          { label: "A", id: "1250" },
+          { label: "B", id: "1251" },
+          { label: "C", id: "1252" },
+          { label: "D", id: "1253" },
+          { label: "E", id: "1254" },
+          { label: "F", id: "1255" },
+          { label: "G", id: "1256" },
+        ],
+      },
+      {
         type: "fill_in_blanks",
         title: `Complete the notes.<br>
           Write <span style="font-weight: bold">ONE WORD ONLY</span> from the passage in each gap.`,
@@ -228,36 +276,6 @@ const questionModule: any[] = [
           The manager can receive any complaints concerning air conditioning, food quality and &#8203;【blank】&#8203;`,
         picture: "https://ieltscat-oss.xdf.cn/1004/1592987703205371.png",
         question_list: [
-          {
-            id: 14,
-            no: "18",
-            content: "residents",
-            answer: "",
-          },
-          {
-            id: 15,
-            no: "19",
-            content: "railway",
-            answer: "",
-          },
-          {
-            id: 16,
-            no: "20",
-            content: "playground",
-            answer: "",
-          },
-          {
-            id: 17,
-            no: "21",
-            content: "mountains",
-            answer: "",
-          },
-          {
-            id: 18,
-            no: "22",
-            content: "garden",
-            answer: "",
-          },
           {
             id: 19,
             no: "23",
@@ -1071,6 +1089,12 @@ const ReadingTest: React.FC = () => {
                         dropEnd={dropEnd}
                         clickTarget={clickTarget}
                       />
+                    </div>
+                  )}
+                  {item.type === "paragraph_matching" && (
+                    <div className="mb-30">
+                      <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
+                      <MatchingTable />
                     </div>
                   )}
                   {item.type === "heading" && (

@@ -47,17 +47,39 @@ const DragDropComponent: React.FC<dragProps> = ({
   const [options, setOptions] = useState<Option[]>(optionList);
   const [targets, setTargets] = useState<Target[]>(targetList);
   const dragItem = useRef<HTMLDivElement | null>(null);
-  let startY;
-  let lastY = 0;
+  let startY: number;
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
+    startY = e.clientY;
+    console.log(startY, "startY");
     dragItem.current = e.currentTarget as HTMLDivElement;
     e.dataTransfer.setData("text/plain", id);
     e.dataTransfer.effectAllowed = "move";
     dragStart && dragStart(e, id);
   };
 
-  const dragOptionStart = () => {};
+  const handleDrag = (event: React.DragEvent) => {
+    const deltaY = event.clientY - startY;
+    const scrollY = window.scrollY;
+
+    if (deltaY < 0 && scrollY > 0) {
+      window.scrollBy(0, deltaY);
+    } else if (deltaY > 0) {
+      const windowHeight = window.innerHeight;
+      const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+      );
+
+      if (scrollY + windowHeight < documentHeight) {
+        window.scrollBy(0, deltaY);
+      }
+    }
+    startY = event.clientY;
+  };
   useEffect(() => {
     console.log(optionList, "optionList");
     setOptions(optionList);
@@ -219,7 +241,6 @@ const DragDropComponent: React.FC<dragProps> = ({
       {type !== "heading" && (
         <div
           className={type === "listening" ? styles["targets-container"] : ""}
-          onDragStart={dragOptionStart}
           onDrop={(e) => {
             const targetElement = document.elementFromPoint(
               e.clientX,
@@ -278,6 +299,7 @@ const DragDropComponent: React.FC<dragProps> = ({
                       handleDragStart(e, target.matchedOption!.id)
                     }
                     onDragEnd={(e) => handleDragEnd(e, target)}
+                    onDrag={handleDrag}
                   >
                     {target.matchedOption.label}.{target.matchedOption.content}
                   </div>
@@ -302,6 +324,7 @@ const DragDropComponent: React.FC<dragProps> = ({
             className={styles["draggable-option"]}
             draggable
             onDragStart={(e) => handleDragStart(e, option.id)}
+            onDrag={handleDrag}
           >
             {option.label}.{option.content}
           </div>
