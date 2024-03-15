@@ -1093,8 +1093,14 @@ const ReadingTest: React.FC = () => {
                   )}
                   {item.type === "paragraph_matching" && (
                     <div className="mb-30">
-                      <p dangerouslySetInnerHTML={{ __html: item.title }}></p>
-                      <MatchingTable />
+                      <p
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                        className="mb-20"
+                      ></p>
+                      <MatchingTable
+                        optionList={item.options}
+                        questionList={item.question_list}
+                      />
                     </div>
                   )}
                   {item.type === "heading" && (

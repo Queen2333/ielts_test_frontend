@@ -2,5 +2,38 @@
   @import "../../base.less";
 }
 .table_container {
-  
+  width: 100%;
+  border-color: grey;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #212529;
+  border-collapse: collapse;
+  .table_head {
+    background: #96c6f9;
+    border: 1px solid;
+    padding: 5px;
+    .table_th {
+      width: 1em;
+      border: 1px solid #ccc;
+    }
+  }
+  .table_td {
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 10px;
+    position: relative;
+  }
+  .checkable {
+    text-align: center;
+    position: relative;
+    span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      color: red;
+    }
+  }
 }
