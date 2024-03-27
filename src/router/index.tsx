@@ -12,6 +12,8 @@ import ListeningStep3 from "../pages/listeningModule/listeningStep3";
 import ListeningModule from "../pages/listeningModule/listeningTest";
 import ReadingStep2 from "../pages/readingModule/readingStep2";
 import ReadingModule from "../pages/readingModule/readingTest";
+import WritingStep2 from "../pages/writingModule/writingStep2";
+import WritingModule from "../pages/writingModule/writingTest";
 
 const routes: any[] = [
   {
@@ -75,6 +77,16 @@ const routes: any[] = [
     name: "ReadingModule",
     path: "readingModule",
     element: <ReadingModule />,
+  },
+  {
+    name: "WritingStep2",
+    path: "writingStep2",
+    element: <WritingStep2 />,
+  },
+  {
+    name: "WritingModule",
+    path: "writingModule",
+    element: <WritingModule />,
   },
   {
     name: "root",
