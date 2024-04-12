@@ -1,25 +1,26 @@
-import { Layout, ConfigProvider, Menu } from "antd";
-import type { MenuProps } from 'antd';
+import { Layout, ConfigProvider, Menu, Breadcrumb } from "antd";
+import type { MenuProps } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import styles from "./styles.module.less";
-import zhCN from 'antd/locale/zh_CN';
+import zhCN from "antd/locale/zh_CN";
+import routes from "../../../router/index";
 import {
-    DesktopOutlined,
-    HomeOutlined,
-    QuestionCircleOutlined,
-    SettingOutlined
-} from '@ant-design/icons';
+  DesktopOutlined,
+  HomeOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
   path?: string,
-  children?: MenuItem[],
+  children?: MenuItem[]
 ): MenuItem {
   return {
     key,
@@ -29,37 +30,89 @@ function getItem(
     label,
   } as MenuItem;
 }
-const items: MenuItem[] = [
-  getItem('首页', 'index', <HomeOutlined />, 'index'),
-  getItem('雅思机考', '2', <DesktopOutlined />, undefined, [
-    getItem('剑桥雅思', 'cambridgeIelts', null, 'cambridgeIelts'),
-    getItem('考场真题', 'examination', null, 'examination'),
-    getItem('自定义题库', 'customizedTest', null, 'customizedTest'),
-  ]),
-  getItem('配置题库', '3', <SettingOutlined />, undefined, [
-    getItem('听力', '9'),
-    getItem('阅读', '10'),
-    getItem('写作', '11'),
-    getItem('套题', '12')
-  ]),
-  getItem('问题反馈', '4', <QuestionCircleOutlined />),
-];
+
+function formatRoutes(routes: any[]) {
+  const transformedItems = [];
+
+  for (const route of routes) {
+    const { label, name, path, icon, showLink, children } = route;
+    if (
+      showLink ||
+      (children && children.some((child: any) => child.showLink))
+    ) {
+      let formattedChildren;
+      if (children && children.length > 0) {
+        formattedChildren = formatRoutes(children);
+      }
+      const menuItem = getItem(label, path, icon, path, formattedChildren);
+      transformedItems.push(menuItem);
+    }
+  }
+
+  return transformedItems;
+}
 
 const ReactLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentNav, setCurrentNav] = useState("index");
+  const [breadcrumbItems, setBreadcrumbItems] = useState<any[]>([]);
+  const [items, setItems] = useState<MenuItem[]>([]);
+
+  const updateBreadcrumbItems = (pathParts: string[], items: any[]) => {
+    const newBreadcrumbItems: any[] = [];
+
+    const findItemByPathPart = (pathPart: string, itemList: any[]) => {
+      return itemList.find((item) => item.path === pathPart);
+    };
+
+    const traverseItems = (parts: string[], itemList: any[]) => {
+      if (parts.length === 0) return;
+
+      const currentItem = findItemByPathPart(parts[0], itemList);
+      if (currentItem) {
+        newBreadcrumbItems.push({
+          title: currentItem.label,
+          href:
+            parts.length === 1 || parts.length === pathParts.length
+              ? currentItem.redirect
+                ? `/#${currentItem.redirect}`
+                : undefined
+              : `/${parts[0]}`,
+        });
+
+        if (currentItem.children) {
+          traverseItems(parts.slice(1), currentItem.children);
+        }
+      } else {
+        for (const item of itemList) {
+          if (item.children) {
+            traverseItems(parts, item.children);
+          }
+        }
+      }
+    };
+
+    traverseItems(pathParts, items);
+    setBreadcrumbItems(newBreadcrumbItems);
+  };
+  useEffect(() => {
+    const _items = formatRoutes(
+      routes.find((item) => item.name === "Layout").children
+    );
+    setItems(_items);
+  }, []);
 
   useEffect(() => {
-    let key = location.pathname.split("/")[1];
+    let key: any = location.pathname.split("/").pop();
     setCurrentNav(key);
-  }, []);
-  const changePage = (e: any) => {
-    console.log(e, "click");
-    setCurrentNav(e.item.props.path);
-    navigate(e.item.props.path);
-  }
+    updateBreadcrumbItems(location.pathname.split("/").filter(Boolean), routes);
+  }, [location.pathname]);
 
+  const changePage = (e: any) => {
+    const path = e.keyPath.reverse().join("/");
+    navigate(path);
+  };
 
   return (
     <Layout>
@@ -68,7 +121,7 @@ const ReactLayout: React.FC = () => {
         <Menu
           defaultSelectedKeys={[currentNav]}
           selectedKeys={[currentNav]}
-          defaultOpenKeys={["2", "3"]}
+          defaultOpenKeys={["test", "config"]}
           mode="inline"
           theme="dark"
           items={items}
@@ -82,6 +135,7 @@ const ReactLayout: React.FC = () => {
             <div className="font-18">Alex</div>
           </div>
         </Header>
+        <Breadcrumb className="pt-20 pl-20" items={breadcrumbItems} />
         <Content>
           <ConfigProvider locale={zhCN}>
             <Outlet />
