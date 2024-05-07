@@ -10,19 +10,44 @@ export const computedLength = (part: number, readingQuestionNumber: any[]) => {
   return length;
 };
 // 初始化obj
-export const initializeObject = (obj: any) => {
-  console.log(obj, "obj")
-  return Object.keys(obj).reduce((acc: any, key) => {
-    if (obj[key] !== null && obj[key] !== undefined) {
-      // 添加检查以排除 null 或 undefined
-      if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
-        acc[key] = initializeObject(obj[key]); // 递归处理对象类型的值
-      } else {
-        acc[key] = Array.isArray(obj[key]) ? [] : "";
-      }
+export const initializeObject = (
+  obj: any,
+  names?: string[],
+  deepArray?: string[]
+): any => {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+  const initializeValue = (
+    value: any,
+    prop: string,
+    _deepArray?: string[]
+  ): any => {
+    if (value === null) {
+      return null;
+    } else if (Array.isArray(value)) {
+      return value.length <= 0 || (_deepArray && _deepArray.includes(prop))
+        ? []
+        : [initializeValue(value[0], prop, _deepArray)];
+    } else if (typeof value === "object") {
+      return initializeObject(value, names, _deepArray);
     } else {
-      acc[key] = null;
+      return "";
     }
-    return acc;
-  }, {});
+  };
+
+  const initializedObj: any = {};
+  for (let prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      if (names && names.includes(prop)) {
+        initializedObj[prop] = obj[prop];
+      } else if (deepArray && deepArray.includes(prop)) {
+        initializedObj[prop] = [];
+      } else {
+        initializedObj[prop] = initializeValue(obj[prop], prop, deepArray);
+      }
+    }
+  }
+
+  return initializedObj;
 };

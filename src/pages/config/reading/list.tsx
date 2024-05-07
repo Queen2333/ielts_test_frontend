@@ -5,7 +5,6 @@ import DynamicTable from "../../../components/dynamicTable";
 
 const ReadingConfigList: React.FC = () => {
   const navigate = useNavigate();
-  const [currentTab, setCurrentTab] = useState("listening");
   const [pageQuery, setPageQuery] = useState({
     total: 100,
     current: 1,
@@ -17,21 +16,21 @@ const ReadingConfigList: React.FC = () => {
       id: 0,
       index: 1,
       key: 1,
-      name: "C18-Listening-Test 4",
+      name: "C18-Reading-Test 4",
       status: 1,
     },
     {
       id: 1,
       index: 2,
       key: 2,
-      name: `C18-Listening-Test 3`,
+      name: `C18-Reading-Test 3`,
       status: 2,
     },
     {
       id: 2,
       index: 3,
       key: 3,
-      name: `C18-Listening-Test 2`,
+      name: `C18-Reading-Test 2`,
       status: 3,
     },
   ]);
@@ -47,7 +46,7 @@ const ReadingConfigList: React.FC = () => {
       width: 100,
       render: (text: object) => (
         <div>
-          <Button type="link" onClick={() => goToTest(text)}>
+          <Button type="link" onClick={() => goToDetail(text)}>
             编辑
           </Button>
           <Button type="link" danger onClick={() => {}}>
@@ -58,12 +57,11 @@ const ReadingConfigList: React.FC = () => {
     },
   ];
 
-  const goToTest = (text: any) => {
+  const goToDetail = (text: any) => {
     console.log(text);
-    navigate("/testStep1", {
+    navigate("/config/readingConfigDetail", {
       state: {
         id: text.id,
-        type: currentTab,
       },
     });
   };

@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState, useCallback } from "react";
 import { Form, Input, Select, Radio, Checkbox, Card, Button } from "antd";
+import Upload from "../upload";
 const { TextArea } = Input;
 import TableEdit from "../dynamicTable";
 import ReactQuill from "react-quill";
@@ -15,6 +16,7 @@ interface DynamicFormProps {
   formItemsConfig: any[];
   formType: string;
   setForm: (data: any) => void;
+  onSubmit: (form: any) => void;
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -23,6 +25,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   formItemsConfig,
   formType,
   setForm,
+  onSubmit,
 }) => {
   const editorRef = useRef(null);
   const [form] = Form.useForm();
@@ -36,20 +39,50 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     }
   }, []);
 
-  const renderComponent = (item: any, index: number, field: any = null) => {
-    const { visible, name, onClick, onChange, data, addRow, ..._item } = item;
-
+  const renderComponent = (
+    item: any,
+    index: number,
+    field: any = null,
+    idx: number = 0
+  ) => {
+    const {
+      visible,
+      name,
+      onClick,
+      onChange,
+      wrapperCol,
+      addText,
+      rowKey,
+      addTableRow,
+      fileType,
+      multiple,
+      fileLimit,
+      changeFile,
+      files,
+      ..._item
+    } = item;
     const components: any = {
-      Input: <Input {...item} />,
-      TextArea: <TextArea {...item} />,
+      Input: (
+        <Input {..._item} onChange={(e) => onChange && onChange(e, field)} />
+      ),
+      TextArea: (
+        <TextArea {..._item} onChange={(e) => onChange && onChange(e, field)} />
+      ),
       Select: (
-        <Select
+        <Select {..._item} onChange={(e) => onChange && onChange(e, field)} />
+      ),
+      Radio: (
+        <Radio.Group
           {..._item}
-          onChange={formType === "item" ? onChange : (e) => onChange(e, field)}
+          onChange={(e) => onChange && onChange(e, field)}
         />
       ),
-      Radio: <Radio.Group {...item} />,
-      Checkbox: <Checkbox.Group {...item} />,
+      Checkbox: (
+        <Checkbox.Group
+          {..._item}
+          onChange={(e) => onChange && onChange(e, field)}
+        />
+      ),
       ReactQuill: (
         <ReactQuill
           ref={editorRef}
@@ -67,54 +100,69 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         />
       ),
       TableEdit: (
-        <div>
-          <Button
-            onClick={
-              formType === "item" ? item.addRow : (e) => item.addRow(e, field)
-            }
-            type="primary"
-            className="mb-10"
-          >
-            新增题干
-          </Button>
-          <TableEdit
-            rowKey="no"
-            pagination={false}
-            columns={item.columns}
-            dataList={
-              typeof item.data === "function" ? item.data(field) : item.data
-            }
-            loading={false}
-          />
-        </div>
+        <TableEdit
+          addText={addText}
+          rowKey={rowKey}
+          pagination={false}
+          field={field}
+          addTableRow={addTableRow}
+          columns={item.columns}
+          updateTableData={(record, column, field, idx) => {
+            const _data = { ...data };
+            _data.items[field.name][item.name][idx][column.key] =
+              record[column.key];
+            setData(_data);
+            form.setFieldValue(
+              ["items", field.name, item.name],
+              _data.items[field.name][item.name]
+            );
+          }}
+          dataList={
+            formType === "list"
+              ? data.items[field.name][item.name]
+              : data[item.name]
+          }
+          loading={false}
+        />
+      ),
+      Upload: (
+        <Upload
+          fileType={fileType}
+          multiple={multiple}
+          fileLimit={fileLimit}
+          files={data.items[field.name][item.name]}
+          changeFile={(e) => {
+            form.setFieldValue(["items", field.name, item.name], e);
+          }}
+        />
       ),
     };
-    return typeof item.visible === "function" ? (
-      item.visible(field) && (
+
+    const normFile = (e: any) => {
+      console.log("Upload event:", e);
+      if (Array.isArray(e)) {
+        return e;
+      }
+      return e?.fileList;
+    };
+    return (
+      (typeof item.visible === "function" ? item.visible(field) : true) && (
         <Form.Item
           {..._item}
+          wrapperCol={item.wrapperCol}
           key={formType === "item" ? index : [field.name, index]}
           name={formType === "item" ? name : [field.name, name]}
+          {...(item.type === "Upload"
+            ? { valuePropName: item.name, getValueFromEvent: normFile }
+            : {})}
         >
           {components[item.type]}
           {item.tip && <p>{item.tip}</p>}
         </Form.Item>
       )
-    ) : (
-      <Form.Item
-        {..._item}
-        key={formType === "item" ? index : [field.name, index]}
-        name={formType === "item" ? name : [field.name, name]}
-      >
-        {components[item.type]}
-        {item.tip && <p>{item.tip}</p>}
-      </Form.Item>
     );
   };
 
-  const submitForm = (values: any) => {
-    console.log(values);
-  };
   return (
     <Form
       {...formConfig}
@@ -125,7 +173,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         width: formConfig.width + "px",
         height: formConfig.height,
       }}
-      onFinish={submitForm}
     >
       {formType === "item" &&
         formItemsConfig.map((item: any, index: number) =>
@@ -145,21 +192,26 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                   extra={
                     <CloseOutlined
                       onClick={() => {
-                        remove(field.name);
+                        if (field.name > 0) remove(field.name);
                       }}
                     />
                   }
                 >
                   {formItemsConfig.map((item: any, index: number) =>
-                    renderComponent(item, index, field)
+                    renderComponent(item, index, field, idx)
                   )}
                 </Card>
               ))}
               <Button
                 type="dashed"
                 onClick={() => {
-                  add();
-                  setForm(initializeObject(data.items[0]));
+                  const obj = initializeObject(
+                    data.items[0],
+                    ["no", "label"],
+                    ["matching_options", "question_list"]
+                  );
+                  add(obj);
+                  setForm(obj);
                 }}
                 block
               >
@@ -176,7 +228,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         }}
         className="mt-20"
       >
-        <Button type="primary" htmlType="submit">
+        <Button
+          type="primary"
+          onClick={async () => {
+            try {
+              const values = await form.validateFields();
+              console.log(values, "formData");
+            } catch (err) {
+              console.log(err, "error");
+            }
+          }}
+        >
           保存
         </Button>
       </Form.Item>

@@ -5,13 +5,16 @@ import { Button, Upload, Image } from "antd";
 
 interface uploadProps {
   files?: any[];
-  changeFile?: () => void;
+  changeFile?: (filelist: any[]) => void;
   action?: string;
-  buttonTxt: string;
+  buttonTxt?: string;
   fileType: string;
+  multiple: boolean;
+  fileLimit?: number;
 }
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -21,24 +24,20 @@ const getBase64 = (file: FileType): Promise<string> =>
   });
 
 const UploadComponent: React.FC<uploadProps> = ({
-  files,
+  files = [],
   changeFile,
   action,
+  multiple,
   buttonTxt,
   fileType,
+  fileLimit = 1,
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    {
-      uid: "-1",
-      name: "xxx.png",
-      status: "done",
-      url: "http://www.baidu.com/xxx.png",
-    },
-  ]);
+  const [fileList, setFileList] = useState<UploadFile[]>(files);
 
   const handlePreview = async (file: UploadFile) => {
+    console.log(file, "preview");
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
     }
@@ -55,47 +54,46 @@ const UploadComponent: React.FC<uploadProps> = ({
   );
 
   const handleChange: UploadProps["onChange"] = (info) => {
+    console.log(info, "info");
     let newFileList = [...info.fileList];
 
-    // 1. Limit the number of uploaded files
-    // Only to show two recent uploaded files, and old ones will be replaced by the new
-    newFileList = newFileList.slice(-2);
+    newFileList = newFileList.slice(-fileLimit);
 
-    // 2. Read from response and show file link
     newFileList = newFileList.map((file) => {
       if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
+        file.url = `http://10.98.163.8:8088${file.response.imageUrl}`;
       }
       return file;
     });
 
     setFileList(newFileList);
+    changeFile && changeFile(newFileList);
   };
 
   const props = {
-    action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
+    action: "http://10.98.163.8:8088/api/upload",
     onChange: handleChange,
-    multiple: true,
+    multiple,
+    fileList,
   };
 
   return (
     <>
       {fileType === "audio" && (
-        <Upload {...props} fileList={fileList}>
+        <Upload {...props} accept="audio/*" name="audio">
           <Button icon={<UploadOutlined />}>{buttonTxt}</Button>
         </Upload>
       )}
       {fileType === "image" && (
         <>
           <Upload
-            action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+            name="image"
+            accept="image/*"
+            {...props}
             listType="picture-card"
-            fileList={fileList}
             onPreview={handlePreview}
-            onChange={handleChange}
           >
-            {fileList.length >= 8 ? null : uploadButton}
+            {fileList.length >= fileLimit ? null : uploadButton}
           </Upload>
           {previewImage && (
             <Image
