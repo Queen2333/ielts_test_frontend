@@ -1,4 +1,11 @@
-import { Layout, ConfigProvider, Menu, Breadcrumb } from "antd";
+import {
+  Layout,
+  ConfigProvider,
+  Menu,
+  Breadcrumb,
+  Dropdown,
+  Space,
+} from "antd";
 import type { MenuProps } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 import React, { useEffect, useState, useRef } from "react";
@@ -7,6 +14,7 @@ import styles from "./styles.module.less";
 import zhCN from "antd/locale/zh_CN";
 import routes from "../../../router/index";
 import {
+  DownOutlined,
   DesktopOutlined,
   HomeOutlined,
   QuestionCircleOutlined,
@@ -132,7 +140,32 @@ const ReactLayout: React.FC = () => {
         <Header className={styles.header}>
           <div className="flex-alc-jcs">
             <div className="font-24 fwb">IELTS机考模拟系统</div>
-            <div className="font-18">Alex</div>
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: [
+                  {
+                    key: "1",
+                    label: (
+                      <span
+                        onClick={() => {
+                          console.log("back");
+                        }}
+                      >
+                        退出登录
+                      </span>
+                    ),
+                  },
+                ],
+              }}
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  Alex
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
           </div>
         </Header>
         <Breadcrumb className="pt-20 pl-20" items={breadcrumbItems} />
