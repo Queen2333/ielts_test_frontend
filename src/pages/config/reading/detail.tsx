@@ -14,9 +14,7 @@ import {
 } from "antd";
 import ReactQuill from "react-quill";
 import type { TabsProps } from "antd";
-import Upload from "../../../components/upload";
 import DynamicForm from "../../../components/dynamicForm";
-import cloneDeep from "lodash/cloneDeep";
 
 interface questionType {
   no: string;
@@ -135,9 +133,10 @@ const ReadingConfigDetail: React.FC = () => {
     return (
       <DynamicForm
         formType="list"
+        isFixed
         formConfig={{
           name: "form" + index,
-          height: "calc(100vh - 530px)",
+          height: "calc(100vh - 480px)",
           ...layoutProps,
         }}
         formData={formData[index]}
@@ -199,6 +198,23 @@ const ReadingConfigDetail: React.FC = () => {
               ["fill_in_blanks", "choose_word"].includes(
                 String(formData[index].items[field.name].type)
               ),
+          },
+          {
+            name: "picture",
+            label: "图片",
+            type: "Upload",
+            fileType: "image",
+            multiple: true,
+            fileLimit: 5,
+            visible: (field: any) =>
+              ["fill_in_blanks", "choose_word"].includes(
+                String(formData[index].items[field.name].type)
+              ),
+            changeFile: (fileList: any[], field: any) => {
+              const arr = [...formData];
+              arr[index].items[field.name].picture[0].url = fileList[0].url;
+              setFormData(arr);
+            },
           },
           {
             name: "matching_options",
@@ -483,7 +499,8 @@ const ReadingConfigDetail: React.FC = () => {
   return (
     <div className={styles.reading_config}>
       {contextHolder}
-      <Card className="mt-10">
+      <Input placeholder="请输入该套阅读名称" className="w-300 mb-10" />
+      <Card style={{ height: "calc(100vh - 255px)" }}>
         <Tabs
           defaultActiveKey="1"
           activeKey={activeKey}

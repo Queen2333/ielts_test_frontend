@@ -15,8 +15,9 @@ interface DynamicFormProps {
   formConfig: any;
   formItemsConfig: any[];
   formType: string;
-  setForm: (data: any) => void;
+  setForm?: (data: any) => void;
   onSubmit: (form: any) => void;
+  isFixed?: boolean;
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -26,6 +27,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   formType,
   setForm,
   onSubmit,
+  isFixed = false,
 }) => {
   const editorRef = useRef(null);
   const [form] = Form.useForm();
@@ -59,6 +61,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       fileLimit,
       changeFile,
       files,
+      customBtn = true,
       ..._item
     } = item;
     const components: any = {
@@ -91,7 +94,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           {..._item}
           modules={{
             toolbar: {
-              container: [["bold", "italic", "underline"], ["custom"]],
+              container: customBtn
+                ? [["bold", "italic", "underline"], ["custom"]]
+                : ["bold", "italic", "underline"],
               handlers: {
                 custom: customButtonHandler,
               },
@@ -109,13 +114,18 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           columns={item.columns}
           updateTableData={(record, column, field, idx) => {
             const _data = { ...data };
-            _data.items[field.name][item.name][idx][column.key] =
-              record[column.key];
-            setData(_data);
-            form.setFieldValue(
-              ["items", field.name, item.name],
-              _data.items[field.name][item.name]
-            );
+            if (formType === "list") {
+              _data.items[field.name][item.name][idx][column.key] =
+                record[column.key];
+              setData(_data);
+              form.setFieldValue(
+                ["items", field.name, item.name],
+                _data.items[field.name][item.name]
+              );
+            } else {
+              _data[item.name][idx][column.key] = record[column.key];
+              form.setFieldValue(item.name, _data.items[field.name][item.name]);
+            }
           }}
           dataList={
             formType === "list"
@@ -130,9 +140,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           fileType={fileType}
           multiple={multiple}
           fileLimit={fileLimit}
-          files={data.items[field.name][item.name]}
+          files={
+            formType === "list"
+              ? data.items[field.name][item.name]
+              : data[item.name]
+          }
           changeFile={(e) => {
-            form.setFieldValue(["items", field.name, item.name], e);
+            formType === "list"
+              ? form.setFieldValue(["items", field.name, item.name], e)
+              : form.setFieldValue(item.name, e);
           }}
         />
       ),
@@ -163,70 +179,104 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     );
   };
 
+  const getString = (
+    inputString: string,
+    startSymbol: string,
+    endSymbol: string
+  ) => {
+    if (!inputString) return 0;
+
+    var startIndex = inputString.indexOf(startSymbol);
+    if (startIndex === -1) {
+      return null;
+    }
+
+    var endIndex = inputString.indexOf(endSymbol, startIndex + 1);
+    if (endIndex === -1) {
+      return null;
+    }
+
+    return Number(
+      inputString.substring(startIndex + 1, endIndex).replace(/\s/g, "")
+    );
+  };
+
   return (
     <Form
       {...formConfig}
       form={form}
       initialValues={data}
-      className="overflow_auto"
       style={{
         width: formConfig.width + "px",
         height: formConfig.height,
       }}
     >
-      {formType === "item" &&
-        formItemsConfig.map((item: any, index: number) =>
-          renderComponent(item, index)
-        )}
-      {formType === "list" && (
-        <Form.List name="items">
-          {(fields, { add, remove }) => (
-            <div
-              style={{ display: "flex", rowGap: 16, flexDirection: "column" }}
-            >
-              {fields.map((field, idx) => (
-                <Card
-                  size="small"
-                  title={`题型 ${field.name + 1}`}
-                  key={field.key}
-                  extra={
-                    <CloseOutlined
-                      onClick={() => {
-                        if (field.name > 0) remove(field.name);
-                      }}
-                    />
-                  }
-                >
-                  {formItemsConfig.map((item: any, index: number) =>
-                    renderComponent(item, index, field, idx)
-                  )}
-                </Card>
-              ))}
-              <Button
-                type="dashed"
-                onClick={() => {
-                  const obj = initializeObject(
-                    data.items[0],
-                    ["no", "label"],
-                    ["matching_options", "question_list"]
-                  );
-                  add(obj);
-                  setForm(obj);
-                }}
-                block
-              >
-                + 添加题型
-              </Button>
-            </div>
+      <div
+        style={{
+          height: formConfig.height
+            ? `calc(100vh - ${
+                (getString(formConfig.height, "-", "px") || 0) + 72
+              }px)`
+            : "",
+        }}
+        className="overflow_auto"
+      >
+        {formType === "item" &&
+          formItemsConfig.map((item: any, index: number) =>
+            renderComponent(item, index)
           )}
-        </Form.List>
-      )}
+        {formType === "list" && (
+          <Form.List name="items">
+            {(fields, { add, remove }) => (
+              <div
+                style={{ display: "flex", rowGap: 16, flexDirection: "column" }}
+              >
+                {fields.map((field, idx) => (
+                  <Card
+                    size="small"
+                    title={`题型 ${field.name + 1}`}
+                    key={field.key}
+                    extra={
+                      <CloseOutlined
+                        onClick={() => {
+                          if (field.name > 0) remove(field.name);
+                        }}
+                      />
+                    }
+                  >
+                    {formItemsConfig.map((item: any, index: number) =>
+                      renderComponent(item, index, field, idx)
+                    )}
+                  </Card>
+                ))}
+                <Button
+                  type="dashed"
+                  onClick={() => {
+                    const obj = initializeObject(
+                      data.items[0],
+                      ["no", "label"],
+                      ["matching_options", "question_list"]
+                    );
+                    add(obj);
+                    setForm && setForm(obj);
+                  }}
+                  block
+                >
+                  + 添加题型
+                </Button>
+              </div>
+            )}
+          </Form.List>
+        )}
+      </div>
+
       <Form.Item
         wrapperCol={{
           ...formConfig.wrapperCol,
           offset: formType === "item" ? 5 : 0,
         }}
         className="mt-20"
+        style={isFixed ? { position: "absolute", bottom: "0px" } : {}}
       >
         <Button
           type="primary"

@@ -141,7 +141,7 @@ const ReactLayout: React.FC = () => {
             <Outlet />
           </ConfigProvider>
         </Content>
-        <Footer>Footer</Footer>
+        <Footer className={styles.footer}>Footer</Footer>
       </Layout>
     </Layout>
   );

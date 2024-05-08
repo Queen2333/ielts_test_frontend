@@ -1,0 +1,40 @@
+:global {
+    @import "../../base.less";
+}
+.login_container {
+    background-color: #f3f3f3;
+    .login_form {
+        width: 50%;
+        height: 100vh;
+        .form_content {
+            width: 400px;
+        }
+    }
+    .pic_right {
+        width: 50%;
+        height: 100vh;
+        position: relative;
+        .top_circle {
+            background-color: #1677ff;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(22, 119, 255, 0.5);
+        }
+        .top_circle::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -15%;
+            width: 130%;
+            height: 60%;
+            background-color: rgba(243, 243, 243, 0.5);
+            border-radius: 0 0 50% 50%;
+            
+        }
+
+        .top_circle::after {
+            z-index: 1;
+        }
+    }
+}

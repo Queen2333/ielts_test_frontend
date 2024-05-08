@@ -28,12 +28,18 @@ import WritingConfigList from "../pages/config/writing/list";
 import WritingConfigDetail from "../pages/config/writing/detail";
 import TestConfigList from "../pages/config/test/list";
 import TestConfigDetail from "../pages/config/test/detail";
+import Login from "../pages/login";
 
 const routes: any[] = [
   {
     name: "IndexUrl",
     path: "/",
-    element: <Navigate to="/index" />,
+    element: <Navigate to="/login" />,
+  },
+  {
+    name: "Login",
+    path: "login",
+    element: <Login />,
   },
   {
     name: "Layout",

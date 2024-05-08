@@ -123,7 +123,7 @@ const ListenlingConfigDetail: React.FC = () => {
         formType="list"
         formConfig={{
           name: "form" + index,
-          height: "calc(100vh - 385px)",
+          height: "calc(100vh - 428px)",
           ...layoutProps,
         }}
         formData={formData[index]}
@@ -424,11 +424,19 @@ const ListenlingConfigDetail: React.FC = () => {
   return (
     <div className={styles.listening_config}>
       {contextHolder}
-      <Card>
-        <Upload buttonTxt="上传音频" fileType="audio" multiple={true} />
+      <Input placeholder="请输入该套听力名称" className="w-300 mb-10" />
+      <Card style={{ height: "90px" }} className="overflow_auto">
+        <Form.Item
+          label="听力音频"
+          labelCol={{
+            span: 2,
+          }}
+        >
+          <Upload buttonTxt="上传音频" fileType="audio" multiple={true} />
+        </Form.Item>
       </Card>
 
-      <Card className="mt-10">
+      <Card className="mt-10" style={{ height: "calc(100vh - 358px)" }}>
         <Tabs
           defaultActiveKey="1"
           activeKey={activeKey}
